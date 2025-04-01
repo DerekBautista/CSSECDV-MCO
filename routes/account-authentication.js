@@ -65,7 +65,7 @@ router.post('/register', async (req, res, next) => {
             lastName: reg_lastName,
             suffix: reg_suffix,
             companyID: companyID,
-            // password: password, // REMOVE IN FINAL BUILD BECAUSE OF PASSPORT
+            //password: password, // REMOVE IN FINAL BUILD BECAUSE OF PASSPORT
         });
 
         User.register(newUser, password, async (err, user) => {

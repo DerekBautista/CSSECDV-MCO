@@ -90,8 +90,10 @@ document.addEventListener('DOMContentLoaded', async function (e){
         document.getElementById("new-project-desc").value = project.description
         document.getElementById("new-project-location").value = project.location
         document.getElementById("new-project-status").value = project.status
-        //document.getElementById("new-project-start-date").value = project.startDate
-        //document.getElementById("new-project-end-date").value = project.dueDate
+
+        //setting the date is done somewhere below, this just be
+        //document.getElementById("new-project-start-date").value = project.startDate.split('T')[0]
+        //document.getElementById("new-project-end-date").value = project.dueDate.split('T')[0]
     
          // Get the employee table
          const employeeListTable = document.getElementById('employee-table');
@@ -178,14 +180,14 @@ document.addEventListener('DOMContentLoaded', async function (e){
         console.log(projectStatus);
         if (projectStatus === 'ON-GOING') {
             document.getElementById('new-project-end-date').setAttribute('disabled', true);
-            console.log(project.startDate)
-            document.getElementById('new-project-start-date').value = project.startDate
+            console.log(project.startDate.split('T')[0])
+            document.getElementById('new-project-start-date').value = project.startDate.split('T')[0]
         } else if (projectStatus === 'COMPLETED') {
             document.getElementById('new-project-end-date').removeAttribute('disabled');
             document.getElementById('new-project-end-date').setAttribute('required', true);
-            document.getElementById('new-project-start-date').value = project.startDate
-            document.getElementById('new-project-end-date').value = project.dueDate
-            console.log(project.startDate)
+            document.getElementById('new-project-start-date').value = project.startDate.split('T')[0]
+            document.getElementById('new-project-end-date').value = project.dueDate.split('T')[0]
+            console.log(project.startDate.split('T')[0])
         }
 
     }
@@ -399,7 +401,7 @@ document.addEventListener('DOMContentLoaded', async function (e){
         await deleteTracker();
     })
 
-    document.getElementById('btn-create-new-tracker').addEventListener('click', function(event) {
+    document.getElementById('btn-update-tracker').addEventListener('click', function(event) {
         event.preventDefault();
 
         const projectName =  document.getElementById('new-project-name').value.toUpperCase();

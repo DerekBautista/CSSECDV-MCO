@@ -90,8 +90,11 @@ function initializeProjectListTable(projlist) {
         row.insertCell().textContent = project.totalEmployees;
         row.insertCell().textContent = project.totalDeployment;
         row.insertCell().textContent = project.status;
-        row.insertCell().textContent = project.startDate;
-        row.insertCell().textContent = project.dueDate;
+        row.insertCell().textContent = project.startDate.split('T')[0];
+        row.insertCell().textContent = project.dueDate?.split('T')[0] || '';
+        
+
+        
 
 
         id += 1;

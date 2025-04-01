@@ -60,11 +60,6 @@ router.post('/', async (req, res) => {
 
             // Destructure form data
             // const { trackerName, trackerDescription, trackerDueDate, trackerPriority, trackerStatus } = req.body
-        
-            console.log("the employees")
-            console.log(employeeListData)
-            console.log(typeof employeeListData)
-
             // Check if all fields are filled
             const requiredFields = [new_project_name, new_project_descr, new_project_location, new_project_status, new_project_start_date];
             if (requiredFields.some(value => value === '' || (typeof value === 'string' && value.trim() === ''))) {
@@ -76,15 +71,18 @@ router.post('/', async (req, res) => {
             }
 
             if(new_project_end_date){
-                
+            
             }
+
+            //console.log("Start Date: " + formatDateWithoutTime(new_project_start_date).split('T')[0])
             // Create new project
             const newProject = new Projects({
                 name: new_project_name,
                 description: new_project_descr,
                 location: new_project_location,
-                startDate: formatDateWithoutTime(new_project_start_date),
-                dueDate: new_project_end_date ? formatDateWithoutTime(new_project_end_date) : null,
+                //I tried everything to remove the time format, but it doesn't work.
+                startDate: formatDateWithoutTime(new_project_start_date).split('T')[0],
+                dueDate: new_project_end_date ? formatDateWithoutTime(new_project_end_date).split('T')[0] : null,
                 //projectPriority: 'Low',
                 status: new_project_status,
                 //projectMembers: [],
@@ -100,9 +98,14 @@ router.post('/', async (req, res) => {
             
             //console.log('New project created');
             console.log(newProject);
+            console.log(new_project_start_date)//ot
+            //console.log(newProject.startDate)
             console.log("======")
-            console.log(employeeListData.length);
-
+            console.log( newProject.name + " No of Employees:" + employeeListData.length);
+            console.log("the employees")
+            console.log(employeeListData)
+            console.log(typeof employeeListData)
+            console.log("==================================================================")
             /*=========CREATE EMPLOYEE PHASE===================*/
             /*
             1. Push employee name into the employees property of projects.
@@ -117,14 +120,14 @@ router.post('/', async (req, res) => {
                     new deployment
             */
             for (let i = 0; i < employeeListData.length; i++) {
-                 console.log(employeeListData[i]);
+                 //console.log(employeeListData[i]);
                  let employee = employeeListData[i];
-                 console.log('---------------------------------');
+                 //console.log('---------------------------------');
                  let name = employee.firstName + ' ' + employee.middleName + ' ' + employee.lastName + ' ' + employee.suffix
                  const existingEmployee = await Employees.findOne({name: name})
-                 console.log(existingEmployee)
+                 //console.log(existingEmployee)
                  if(existingEmployee){
-                    console.log('existing!')
+                    //console.log('The Employee exists in the MondoDB!')
                     const newDeployment = new Deployments({
                         employeeRef: existingEmployee._id,
                         employee: existingEmployee.name,
@@ -145,7 +148,7 @@ router.post('/', async (req, res) => {
                     await existingEmployee.save();
                 }
                 else{
-                    console.log('does not exist!')
+                    //console.log('The Employee does not exist in the MongoDB!')
                     const newEmployee = new Employees({
                          //no: employee.no,
                          name: name,

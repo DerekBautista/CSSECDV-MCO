@@ -1,6 +1,8 @@
 # CSSWENG-MCO
 
 ### First, install the Electron Framework in your local computer
+npm install -g electron
+
 > Run this code in your terminal where you save the clone of this github repository.
 ```
 npm ci
