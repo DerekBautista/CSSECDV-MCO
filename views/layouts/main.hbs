@@ -49,7 +49,7 @@
 									<input type="number" name="companyID" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" id="login-companyID" class="form-control" placeholder="Enter Company ID" required>
 
 									<!-- Error Message -->
-									<div class="alert alert-danger mt-3" id="login-companyID-message" style="display:none"><role="alert"></div>
+									{{!-- <div class="alert alert-danger mt-3" id="login-companyID-message" style="display:none"><role="alert"></div> --}}
 								
 								</div>
 								<div class="mb-3 mt-3">
@@ -62,7 +62,7 @@
                                     </div>
 
 									<!-- Error Message -->
-									<div class="alert alert-danger mt-3" id="login-password-message" style="display:none"> <role="alert"></div>
+									<div class="alert alert-danger mt-3" id="login-error-message" style="display:none"> <role="alert"></div>
 									
 								</div>
 								<button type="submit" class="btn btn-success mt-3" id="login-submit-btn">Login</button>

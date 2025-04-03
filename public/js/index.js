@@ -43,36 +43,33 @@ $("#login-submit-btn").on('click', async function (event) {
     }
 
     // Check if the company ID exists
-    const companyIDResponse = await fetch(`/user/isCompanyID?companyID=${companyID}`, {
-        method: 'GET'
-    });
+    try{
+        const companyIDResponse = await fetch(`/user/isCompanyID?companyID=${companyID}`, {
+            method: 'GET'
+        });
 
-    switch (companyIDResponse.status) {
-        case 200:
+        const data = await companyIDResponse.json();
+
+        if (!data.exists) {
+            // Show error if company doesn't exist
+            $("#login-error-message").html('Failed Login.').css('display', 'block').css('display', 'block');;
+            return;
+        }
+        else{
             // Check if the password is correct
             const passwordResponse = await fetch(`/user/isPassword?companyID=${companyID}&password=${loginPassword}`, {
                 method: 'GET'
             });
-
-            switch (passwordResponse.status) {
-                case 200:
-                    $("#login-form").submit();
-                    break;
-                case 401:
-                    $("#login-password-message").html('Password is incorrect.');
-                    $("#login-password-message").css('display', 'block');
-                    $("#login-companyID-message").css('display', 'none');
-                    break;
-                default:
-                    console.log('Error');
+            const passwordData = await passwordResponse.json()
+            if(!passwordData.authenticated){
+                $("#login-error-message").html('Failed Login.').css('display', 'block');
             }
-            break;
-        case 404:
-            $("#login-companyID-message").html('Company ID not found.');
-            $("#login-companyID-message").css('display', 'block');
-            break;
-        default:
-            console.log('Error');
+            else{
+                $("#login-form").submit();;
+            }
+        }
+    } catch (err) {
+        console.log("Network error (e.g., server down):", err);
     }
 });
 

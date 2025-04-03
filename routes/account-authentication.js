@@ -103,7 +103,6 @@ router.post('/register', async (req, res, next) => {
 
 router.post('/login', async (req, res, next) => {
     const { companyID, password } = req.body;
-    console.log('Went here')
     const requiredFields = [companyID, password];
     if (requiredFields.some(value => value === '' || value.trim() === '')) {
         return res.status(400).json({ message: 'Please fill out all fields' });
@@ -147,12 +146,8 @@ router.get('/isCompanyID', async (req, res) => {
 
         const companyIDExists = await User.findOne({ companyID: companyID });
         console.log('Company ID exists:', companyIDExists);
-
-        if (companyIDExists) {
-            res.sendStatus(200);
-        } else {
-            res.sendStatus(404);
-        }
+        res.status(200).json({ exists: !!companyIDExists });
+        
     } catch (error) {
         console.error('Error checking if company ID exists:', error);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -177,9 +172,9 @@ router.get('/isPassword', async (req, res) => {
             }
 
             if (result) {
-                res.sendStatus(200);
+                res.status(200).json({ authenticated: true});
             } else {
-                res.sendStatus(401);
+                res.status(200).json({ authenticated: false});
             }
         });
     } catch (error) {
