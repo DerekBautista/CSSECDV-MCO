@@ -65,7 +65,7 @@ $("#login-submit-btn").on('click', async function (event) {
                 $("#login-error-message").html('Failed Login.').css('display', 'block');
             }
             else{
-                $("#login-form").submit();;
+                $("#login-form").submit();
             }
         }
     } catch (err) {

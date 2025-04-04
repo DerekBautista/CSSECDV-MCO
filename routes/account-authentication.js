@@ -101,9 +101,13 @@ router.post('/register', async (req, res, next) => {
     }
 });
 
+//this only gets triggered when index.js does $("#login-form").submit();
 router.post('/login', async (req, res, next) => {
     const { companyID, password } = req.body;
     const requiredFields = [companyID, password];
+    const ip = req.ip;
+
+    // this is another wave of authentication, the 1st wave is on index.js event listener on login button
     if (requiredFields.some(value => value === '' || value.trim() === '')) {
         return res.status(400).json({ message: 'Please fill out all fields' });
     }
@@ -145,8 +149,21 @@ router.get('/isCompanyID', async (req, res) => {
         console.log('Received company ID:', companyID);
 
         const companyIDExists = await User.findOne({ companyID: companyID });
-        console.log('Company ID exists:', companyIDExists);
+        //console.log('Company ID exists:', companyIDExists);
         res.status(200).json({ exists: !!companyIDExists });
+        /**
+         * TODO:
+         * 
+         * 1. Insert an if else statement where if companyID doesnt exist
+         *      - check db if ip is already in the failedattempts schema.
+         *      if not existing, create one for it and add a 1
+         *      else
+         *          add +1 to the ip's number of attempts
+         *          if 5, lock it out
+         *     
+         *     !!!Upon opening the webapp, check if the ip is in the failedattempts schema and lock it out already if it has 5 attempts already
+         *      
+         */
         
     } catch (error) {
         console.error('Error checking if company ID exists:', error);
@@ -174,6 +191,19 @@ router.get('/isPassword', async (req, res) => {
             if (result) {
                 res.status(200).json({ authenticated: true});
             } else {
+                        /**
+         * TODO:
+         * 
+         * 1. Insert an if else statement where if companyID doesnt exist
+         *      - check db if ip is already in the failedattempts schema.
+         *      if not existing, create one for it and add a 1
+         *      else
+         *          add +1 to the ip's number of attempts
+         *          if 5, lock it out
+         *     
+         *     !!!Upon opening the webapp, check if the ip is in the failedattempts schema and lock it out already if it has 5 attempts already
+         *      
+         */
                 res.status(200).json({ authenticated: false});
             }
         });
