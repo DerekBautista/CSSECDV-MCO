@@ -1,8 +1,15 @@
 const mongoose = require('mongoose');
 
-const FailedAttempt = mongoose.model('FailedAttempt', new mongoose.Schema({
+const Schema = mongoose.Schema;
+
+const FailedAttempt = new mongoose.Schema({
     ip: String,
-    count: Number,
+    remainingAttempts: Number,
+    totalFailedAttempts: Number,
     blockedUntil: Date,
     createdAt: { type: Date, expires: '24h' } 
-}));
+})
+
+const failedAttempt = mongoose.model('FailedAttempt', FailedAttempt);
+
+module.exports = failedAttempt;
