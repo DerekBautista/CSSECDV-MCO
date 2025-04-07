@@ -1,4 +1,4 @@
-/* 
+1/* 
     acccount-authentication.js
     This file handles the registration and login of users.
 */
@@ -17,26 +17,18 @@ async function checkIpAttempts(ip){
     const ipInstance = await FailedAttempts.findOne({ip: ip});
 
     if (ipInstance){
-        ipInstance.remainingAttempts -= 1
-        ipInstance.totalFailedAttempts += 1
-        if (ipInstance.remainingAttempts == 0){
-                // Block for 1 minute (60,000 milliseconds)
-                ipInstance.blockedUntil = new Date(Date.now() + 60 * 1000); 
-                // 15 mins
-                //ipInstance.blockedUntil = new Date(Date.now() + 15 * 60 * 1000);
-            console.log(`Blocking IP ${ip} for too many failed attempts`);
-        }
-        await ipInstance.save();
-        return ipInstance.remainingAttempts;
+       return await ipInstance.deductAttempts()
     }
     else{
         const newIpInstance = new FailedAttempts({
             ip: ip,
             remainingAttempts: 4, // Assuming 5 total attempts (5-1 = 4 remaining)
             totalFailedAttempts: 1,
+            isLocked: false
         });
         await newIpInstance.save();
-        return newIpInstance.remainingAttempts;
+        //return newIpInstance.remainingAttempts;
+        return { remainingAttempts: newIpInstance.remainingAttempts, lockedUntil: 0};
     }
 }
 
@@ -176,15 +168,14 @@ router.get('/isCompanyID', async (req, res) => {
     try {
         const companyID = req.query.companyID;
         console.log('Received company ID:', companyID);
-
         const companyIDExists = await User.findOne({ companyID: companyID });
         //console.log('Company ID exists:', companyIDExists);
         if (companyIDExists) {
-            res.status(200).json({ exists: true });
+            res.status(200).json({ authenticated: true });
         } else {
             const ip = req.ip;
-            const remainingAttempts = await checkIpAttempts(ip)
-            res.status(200).json({ authenticated: false, remainingAttempts: remainingAttempts});
+            const {remainingAttempts, lockedUntil} = await checkIpAttempts(ip)
+            res.status(200).json({ authenticated: false, remainingAttempts: remainingAttempts, lockedUntil: lockedUntil});
         }
     } catch (error) {
         console.error('Error checking if company ID exists:', error);
@@ -198,7 +189,7 @@ router.get('/isPassword', async (req, res) => {
         // Get the company ID and password from the request body
         const companyID = req.query.companyID;
         const password = req.query.password;
-
+        
         // Find the user with the company ID
         const user = await User.findOne({ companyID: companyID });
 
@@ -208,13 +199,12 @@ router.get('/isPassword', async (req, res) => {
                 console.error('Error checking if password is correct:', err);
                 return res.status(500).json({ message: 'Internal Server Error' });
             }
-
             if (result) {
                 res.status(200).json({ authenticated: true});
             } else {
                 const ip = req.ip;
-                const remainingAttempts = await checkIpAttempts(ip)
-                res.status(200).json({ authenticated: false, remainingAttempts: remainingAttempts});
+                const {remainingAttempts, lockedUntil} = await checkIpAttempts(ip)
+                res.status(200).json({ authenticated: false, remainingAttempts: remainingAttempts, lockedUntil: lockedUntil});
             }
         });
     } catch (error) {
@@ -223,7 +213,15 @@ router.get('/isPassword', async (req, res) => {
     }
 });
 
-
+router.get('/checkIpLockout', async (req, res) => {
+    const ip = req.ip
+    const ipInstance = await FailedAttempts.findOne({ip: ip});
+    if (!ipInstance) {
+        return res.json({ isLocked: false });
+    }
+    const {isLocked, lockedUntil} = ipInstance.isLockedOut()
+    return res.json({ isLocked: isLocked, lockedUntil: lockedUntil });
+})
 
 // Function to handle user logout
 router.get('/logout', (req, res) => {   
