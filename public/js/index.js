@@ -52,7 +52,7 @@ $("#login-submit-btn").on('click', async function (event) {
 
         if (!data.exists) {
             // Show error if company doesn't exist
-            $("#login-error-message").html('Failed Login.').css('display', 'block').css('display', 'block');;
+            $("#login-error-message").html('Incorrect company ID or password').css('display', 'block').css('display', 'block');;
             return;
         }
         else{
@@ -62,7 +62,7 @@ $("#login-submit-btn").on('click', async function (event) {
             });
             const passwordData = await passwordResponse.json()
             if(!passwordData.authenticated){
-                $("#login-error-message").html('Failed Login.').css('display', 'block');
+                $("#login-error-message").html('Incorrect company ID or password').css('display', 'block');
             }
             else{
                 $("#login-form").submit();
