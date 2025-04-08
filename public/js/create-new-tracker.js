@@ -22,6 +22,7 @@ document.getElementById('new-project-status').addEventListener('change', functio
 
     if (projectStatus === 'ON-GOING') {
         document.getElementById('new-project-end-date').setAttribute('disabled', true);
+        document.getElementById('new-project-end-date').removeAttribute('required');
     } else if (projectStatus === 'COMPLETED') {
         document.getElementById('new-project-end-date').removeAttribute('disabled');
         document.getElementById('new-project-end-date').setAttribute('required', true);
@@ -271,19 +272,56 @@ document.addEventListener('DOMContentLoaded',  function (e) {
         }
         // Iterate through each field and check if it's empty
         let hasErrors = false;
+        const today = new Date();
+        const twoYearsAgo = new Date(today.setFullYear(today.getFullYear() - 2));
+        const oneYearAhead = new Date(today.setFullYear(today.getFullYear() + 10));
+    
         for (const [field, errorMessage] of Object.entries(fieldErrorMap)) {
             const value = $(`#${field}`).val();
-            if (value === '') {
+            
+            if (field === 'new-project-end-date' && projectStatus === 'ON-GOING' && value === '') {
+                // Skip validation for end date if project status is "ON-GOING"
+                continue;
+            }
+    
+            if (field !== 'new-project-end-date' && value === '') {
+                // General validation for other fields
                 $(`#${errorMessage}`).html('Please fill out this field.').css('display', 'block');
                 hasErrors = true;
-            }else if (value === null){
-                $(`#${errorMessage}`).html('Please select either ON-GOING or COMPLETED').css('display', 'block');
+            } else if (field === 'new-project-start-date' && !projectStartDate) {
+                $(`#${errorMessage}`).html('Please select a start date.').css('display', 'block');
                 hasErrors = true;
-            } else if (value === 'ON-GOING'){
-                break;
+            } else if (field === 'new-project-end-date' && projectStatus !== 'ON-GOING' && !projectEndDate) {
+                // Special validation for end date if the project is not "ON-GOING"
+                $(`#${errorMessage}`).html('Please select an end date.').css('display', 'block');
+                hasErrors = true;
+            } else if (field === 'new-project-start-date' && new Date(projectStartDate) < twoYearsAgo) {
+                $(`#${errorMessage}`).html('Start date cannot be more than 2 years ago.').css('display', 'block');
+                hasErrors = true;
+            } else if (field === 'new-project-end-date' && projectEndDate && new Date(projectEndDate) > oneYearAhead) {
+                $(`#${errorMessage}`).html('End date is too far in the future (10 years ahead).').css('display', 'block');
+                hasErrors = true;
+            } else if (field === 'new-project-end-date' && projectEndDate && new Date(projectEndDate) < new Date(projectStartDate)) {
+                $(`#${errorMessage}`).html('End date cannot be earlier than start date.').css('display', 'block');
+                hasErrors = true;
             } else {
                 $(`#${errorMessage}`).css('display', 'none');
             }
+        }
+    
+        if (projectName.length > 100) {
+            $('#project-name-message').html('Project name cannot exceed 100 characters.').css('display', 'block');
+            hasErrors = true;
+        }
+    
+        if (projectDesc.length > 255) {
+            $('#project-desc-message').html('Project description cannot exceed 255 characters.').css('display', 'block');
+            hasErrors = true;
+        }
+    
+        if (projectLocation.length > 100) {
+            $('#project-location-message').html('Project location cannot exceed 100 characters.').css('display', 'block');
+            hasErrors = true;
         }
         
         if (empList.length === 0){
