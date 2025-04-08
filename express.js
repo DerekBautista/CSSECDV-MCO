@@ -86,7 +86,7 @@ const projectListRoute = require('./routes/project-list-route.js')
 const accountSettingsRoute = require('./routes/account-settings-route.js');
 const templateProjectTrackerRoute = require('./routes/template-project-tracker-route.js');
 const editProjectTrackerRoute = require('./routes/edit-project-tracker-route.js');
-
+const reauthenticateRoute = require('./routes/reauthenticate-route.js')
 /*============================================EXPRESS====================================================================*/ 
 
 // Root route
@@ -127,6 +127,7 @@ app.use('/employee-list', verifyLogin, employeeListRoute);
 app.use('/account-settings', verifyLogin, accountSettingsRoute);
 app.use('/template-project-tracker', verifyLogin, templateProjectTrackerRoute);
 app.use('/edit-project-tracker', verifyLogin, editProjectTrackerRoute);
+app.use('/reauthenticate', reauthenticateRoute)
 // Temporary route for design purposes
 // app.use('/account-settings', verifyLogin, templateProjectTrackerRoute);
 
@@ -138,7 +139,8 @@ function verifyLogin(req, res, next) {
         console.log('User not logged in!')
         res.render('index', {message: 'User not logged in'})
     } else {
-         next();
+        //app.use('/reauthenticate', reauthenticateRoute )
+        next();
     }
 }
 
