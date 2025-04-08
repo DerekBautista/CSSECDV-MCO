@@ -12,29 +12,10 @@ $("#login-show-hide-password").on('click', function() {
     }
 });
 
-$("#login-btn").on('click', async function (event){
-    const ipPromise = await fetch(`/user/checkIpLockout`,{
-        method: 'GET'
-    });
-    
-    const response = await ipPromise.json();
-    const ipIsLockedout = response.isLocked;
-    console.log("ip is locked?: " + ipIsLockedout)
-    if(ipIsLockedout){
-        const lockedUntil = new Date(response.lockedUntil)
-        const now = new Date();
-        const secondsRemaining = Math.max(0, Math.floor((lockedUntil - now) / 1000));
-        $('#login-submit-btn').prop('disabled', true);
-        $(`#login-error-message`).html('Ip is locked out. Try again in ' + secondsRemaining + ' seconds').css('display', 'block')
-    }
-    else{
-        $('#login-submit-btn').prop('disabled', false);
-        $(`#login-error-message`).css('display', 'none')
-    }
-})
 
 $("#login-submit-btn").on('click', async function (event) {
     event.preventDefault();
+
     const companyID = $("#login-companyID").val();
     const loginPassword = $("#login-password").val();
 
@@ -67,39 +48,21 @@ $("#login-submit-btn").on('click', async function (event) {
             method: 'GET'
         });
 
-        const companyIdData = await companyIDResponse.json();
-        
-        
-        if (!companyIdData.authenticated) {
+        const data = await companyIDResponse.json();
+
+        if (!data.exists) {
             // Show error if company doesn't exist
-            if(companyIdData.remainingAttempts > 0)
-                $("#login-error-message").html('Failed Login. (' + companyIdData.remainingAttempts + ' attempts remaining.)').css('display', 'block');
-            else{
-                const lockedUntil = new Date(companyIdData.lockedUntil);
-                const now = new Date();
-                const secondsRemaining = Math.max(0, Math.floor((lockedUntil - now) / 1000));
-                $("#login-error-message").html('No more attempts. Ip is locked out. Try again in ' + secondsRemaining + ' seconds').css('display', 'block');
-                $('#login-submit-btn').prop('disabled', true);
-            }
+            $("#login-error-message").html('Incorrect company ID or password').css('display', 'block').css('display', 'block');;
+            return;
         }
         else{
             // Check if the password is correct
             const passwordResponse = await fetch(`/user/isPassword?companyID=${companyID}&password=${loginPassword}`, {
                 method: 'GET'
             });
-
             const passwordData = await passwordResponse.json()
-
             if(!passwordData.authenticated){
-                if(passwordData.remainingAttempts > 0)
-                    $("#login-error-message").html('Failed Login. (' + passwordData.remainingAttempts + ' attempts remaining.)').css('display', 'block');
-                else{
-                    const lockedUntil = new Date(passwordData.lockedUntil);
-                    const now = new Date();
-                    const secondsRemaining = Math.max(0, Math.floor((lockedUntil - now) / 1000));
-                    $("#login-error-message").html('No more attempts. Ip is locked out. Try again in ' + secondsRemaining + ' seconds').css('display', 'block');
-                    $('#login-submit-btn').prop('disabled', true);
-                }
+                $("#login-error-message").html('Incorrect company ID or password').css('display', 'block');
             }
             else{
                 $("#login-form").submit();
