@@ -52,3 +52,16 @@ $("#image-upload").on('change', function() {
     previewImage(this, imagePreview);
 
 });
+
+//FIX THIS
+// $("#passwordChangeSubmit").on("click", async function (event) {
+//     event.preventDefault();
+
+//     const securityAnswer1 = $("#security_answer_1");
+//     const securityAnswer2 = $("#security_answer_2");
+//     const newPassword = $("#acc-password");
+//     const confirmPassowrd = $("#acc-confirm");
+//     const currentPassword = $("#current-password");
+
+//     let hasErrors = false;
+// });

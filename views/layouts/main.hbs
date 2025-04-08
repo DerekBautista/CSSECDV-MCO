@@ -154,6 +154,36 @@
 											<i class="fas fa-eye-slash" aria-hidden="true"></i>
 										</span>
                                     </div>
+								<div class="mb-3 mt-3">
+									<h5 class="fw-bold">Password Reset Questions</h5>
+									<p class="text-muted">Please select questions that have unique answers only you would know.</p>
+									
+									<div class="mb-3">
+										<label for="security-question-1" class="form-label">Security Question 1</label>
+										<select class="form-select" id="security-question-1" name="securityQuestion1" required>
+											<option value="">Select a question</option>
+											<option value="What was the name of your first pet?">What was the name of your first pet?</option>
+											<option value="In what city did you meet your spouse/partner?">In what city did you meet your spouse/partner?</option>
+											<option value="What was your childhood nickname?">What was your childhood nickname?</option>
+											<option value="What is the name of your favorite childhood teacher?">What is the name of your favorite childhood teacher?</option>
+											<option value="What street did you live on in third grade?">What street did you live on in third grade?</option>
+										</select>
+										<input type="text" class="form-control mt-2" name="securityAnswer1" placeholder="Your answer" required>
+									</div>
+
+									<div class="mb-3">
+										<label for="security-question-2" class="form-label">Security Question 2</label>
+										<select class="form-select" id="security-question-2" name="securityQuestion2" required>
+											<option value="">Select a question</option>
+											<option value="What is the middle name of your youngest child?">What is the middle name of your youngest child?</option>
+											<option value="What was the name of your first boss?">What was the name of your first boss?</option>
+											<option value="Where were you when you had your first alcoholic drink?">Where were you when you had your first alcoholic drink?</option>
+											<option value="What was the first concert you attended?">What was the first concert you attended?</option>
+											<option value="What was the make and model of your first car?">What was the make and model of your first car?</option>
+										</select>
+										<input type="text" class="form-control mt-2" name="securityAnswer2" placeholder="Your answer" required>
+									</div>
+								</div>
 
 									<!-- Error Message -->
 									<div class="alert alert-danger mt-3" id="register-confirmPassword-message" style="display:none" role="alert"></div>

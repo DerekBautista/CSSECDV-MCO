@@ -934,8 +934,8 @@ input[type="date"] {
 }
 
 .account-details-holder {
-    width: 60%;
-    height: 100%;
+    width: auto;
+    height: auto;
     background-color: var(--light);
     margin-top: 3rem;
     margin-left: 1rem;
@@ -959,4 +959,13 @@ input[type="date"] {
     margin-top: 0;
     margin-left: 1.5rem;
     margin-right: 1rem;
+}
+
+.details-containers {
+    display: flex;
+    flex-direction: column;
+}
+
+.password-holder {
+    padding: 0 2rem 0 2rem;
 }

@@ -32,8 +32,24 @@ const userSchema = mongoose.Schema({
     userProfilePic: {
         type: String,
         default: "img/default-user-profile-pic.jpg" // This is to make sure that the user has a default profile picture
+    },
+    passwordHistory: {
+        type: [String],
+        default: []
+    },
+    lastPasswordChange: {
+        type: Date,
+        default: null
+    },
+    securityQuestion1: {
+        question: String,
+        answer: String
+    },
+    securityQuestion2: {
+        question: String,
+        answer: String
     }
-})
+});
 
 userSchema.plugin(passportLocalMongoose, {usernameField: 'companyID'});
 const User = mongoose.model("User", userSchema);

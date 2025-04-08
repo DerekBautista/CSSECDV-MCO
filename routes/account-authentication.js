@@ -23,7 +23,7 @@ async function checkIpAttempts(ip){
         const newIpInstance = new FailedAttempts({
             ip: ip,
             remainingAttempts: 4, // Assuming 5 total attempts (5-1 = 4 remaining)
-            totalFailedAttempts: 1,
+            //totalFailedAttempts: 1,
             isLocked: false
         });
         await newIpInstance.save();
@@ -40,6 +40,7 @@ router.post('/register', async (req, res, next) => {
         const { action } = req.body;
         console.log('Type of action:', action);
 
+
         // If the user is trying to register
         // Destructure form data
         const { 
@@ -48,12 +49,17 @@ router.post('/register', async (req, res, next) => {
             reg_lastName, 
             reg_suffix, 
             companyID, 
-            password, 
+            password,
+            securityQuestion1,
+            securityAnswer1,
+            securityQuestion2,
+            securityAnswer2,
             reg_confirm } = req.body
 
+        
 
         // Validate form data
-        const requiredFields = [reg_firstName, reg_lastName, companyID, password, reg_confirm];
+        const requiredFields = [reg_firstName, reg_lastName, companyID, password, securityQuestion1, securityAnswer1, securityQuestion2, securityAnswer2, reg_confirm];
         if (requiredFields.some(value => value === '' || value.trim() === '')) {
             return res.status(400).json({ message: 'Please fill out all fields' });
         }
@@ -79,6 +85,19 @@ router.post('/register', async (req, res, next) => {
             return res.status(400).json({ message: 'Passwords do not match' });
         }
 
+        if (securityQuestion1 === securityQuestion2) {
+            return res.status(400).json({ message: 'Security questions must be different' });
+        }
+
+        const commonAnswers = ['god', 'love', 'password', 'secret', '123']; //expand common answers
+        const answer1 = securityAnswer1.toLowerCase().trim();
+        const answer2 = securityAnswer2.toLowerCase().trim();
+        const test = commonAnswers[1].trim();
+
+        if (commonAnswers.includes(answer1) || commonAnswers.includes(answer2)) {
+            return res.status(400).json({ error: 'Security answers are too common. Please choose more unique answers.' });
+        }
+
         // Create a new user
         const newUser = new User({
             firstName: reg_firstName,
@@ -86,6 +105,14 @@ router.post('/register', async (req, res, next) => {
             lastName: reg_lastName,
             suffix: reg_suffix,
             companyID: companyID,
+            securityQuestion1: {
+                question: securityQuestion1,
+                answer: securityAnswer1
+            },
+            securityQuestion2: {
+                question: securityQuestion2,
+                answer: securityAnswer2
+            }
             //password: password, // REMOVE IN FINAL BUILD BECAUSE OF PASSPORT
         });
 
