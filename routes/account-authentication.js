@@ -35,6 +35,12 @@ async function checkIpAttempts(ip){
 // Function to handle user login and registration
 router.post('/register', async (req, res, next) => {
     try {
+
+        // Check what type of action the user is trying to do
+        const { action } = req.body;
+        console.log('Type of action:', action);
+
+        // If the user is trying to register
         // Destructure form data
         const { 
             reg_firstName, 
@@ -43,77 +49,67 @@ router.post('/register', async (req, res, next) => {
             reg_suffix, 
             companyID, 
             password, 
-            reg_confirm 
-        } = req.body;
+            reg_confirm } = req.body
 
-        // 1. Validate Required Fields
+
+        // Validate form data
         const requiredFields = [reg_firstName, reg_lastName, companyID, password, reg_confirm];
         if (requiredFields.some(value => value === '' || value.trim() === '')) {
-            return res.status(400).json({ message: 'Please fill out all the fields' });
+            return res.status(400).json({ message: 'Please fill out all fields' });
         }
 
-        // 2. Validate Company ID Length (must be exactly 10 characters)
+        // Check if company ID is 10 characters long
         if (companyID.length !== 10) {
-            return res.status(400).json({ message: 'Company ID must be exactly 10 characters long' });
+            return res.status(400).json({ message: 'Company ID must be 10 characters long' });
         }
 
-        // 3. Validate Company ID Range (no special characters or numbers other than digits)
-        if (!/^\d{10}$/.test(companyID)) {
-            return res.status(400).json({ message: 'Company ID must contain only digits' });
-        }
-
-        // 4. Check if Company ID Already Exists
+        // Check if company ID already exists
         const companyIDExists = await User.findOne({ companyID: companyID });
         if (companyIDExists) {
             return res.status(400).json({ message: 'Company ID already exists' });
         }
-
-        // 5. Validate Password Length (at least 8 characters, max 20 characters)
-        if (password.length < 8 || password.length > 20) {
-            return res.status(400).json({ message: 'Password must be between 8 and 20 characters long' });
+ 
+        // Check if password is at least 8 characters long
+        if (password.length < 8) {
+            return res.status(400).json({ message: 'Password must be at least 8 characters long' });
         }
 
-        // 6. Validate Password and Confirm Password Match
+        // Check if password and confirm password match
         if (password !== reg_confirm) {
             return res.status(400).json({ message: 'Passwords do not match' });
         }
 
-        // 7. Validate Name Length (First and Last Name should be between 1 and 50 characters)
-        if (reg_firstName.length < 1 || reg_firstName.length > 50) {
-                return res.status(400).json({ message: 'First name must be between 1 and 50 characters long' });
-        }
-    
-        if (reg_lastName.length < 1 || reg_lastName.length > 50) {
-                return res.status(400).json({ message: 'Last name must be between 1 and 50 characters long' });
-        }
-
-        // If all validations pass, proceed with user creation
+        // Create a new user
         const newUser = new User({
             firstName: reg_firstName,
             middleName: reg_middleName,
             lastName: reg_lastName,
             suffix: reg_suffix,
-            companyID: companyID
+            companyID: companyID,
+            //password: password, // REMOVE IN FINAL BUILD BECAUSE OF PASSPORT
         });
 
         User.register(newUser, password, async (err, user) => {
             try {
                 if (err) {
                     console.error('Error registering user:', err);
+        
+                    // Check if the error is due to duplicate key (e.g., duplicate companyID)
                     if (err.name === 'MongoError' && err.code === 11000) {
                         return res.status(400).json({ message: 'Company ID already exists' });
                     }
+        
                     return res.status(500).json({ message: 'Internal Server Error' });
                 }
-
+        
                 // If registration is successful, log in the user
                 req.login(user, (loginErr) => {
                     if (loginErr) {
                         console.error('Error during login after registration:', loginErr);
                         return res.status(500).json({ message: 'Internal Server Error' });
                     }
-
-                    res.redirect('/landing-page'); // Redirect after successful registration
+        
+                    res.redirect('/landing-page'); // Redirect to dashboard or any other page on successful registration
                 });
             } catch (catchErr) {
                 console.error('Error in registration process:', catchErr);
@@ -122,11 +118,9 @@ router.post('/register', async (req, res, next) => {
         });
     } catch (error) {
         console.error('Error registering user:', error);
-        return res.status(500).json({ message: 'Internal Server Error' });
+        res.status(500).json({ message: 'Internal Server Error' });
     }
 });
-
-
 
 //this only gets triggered when index.js does $("#login-form").submit();
 router.post('/login', async (req, res, next) => {
@@ -134,22 +128,11 @@ router.post('/login', async (req, res, next) => {
     const requiredFields = [companyID, password];
     const ip = req.ip;
 
-    // 2.3.1: Reject if required fields are missing or empty
+    // this is another wave of authentication, the 1st wave is on index.js event listener on login button
     if (requiredFields.some(value => value === '' || value.trim() === '')) {
         return res.status(400).json({ message: 'Please fill out all fields' });
     }
 
-    // 2.3.2: Validate Company ID Length (e.g., exactly 10 characters)
-    if (companyID.length !== 10) {
-        return res.status(400).json({ message: 'Company ID must be 10 characters long' });
-    }
-
-    // 2.3.3: Validate Password Length (e.g., at least 8 characters)
-    if (password.length < 8) {
-        return res.status(400).json({ message: 'Password must be at least 8 characters long' });
-    }
-
-    // Check if the user exists based on the Company ID
     const user = await User.findOne({ companyID: companyID });
 
     if (!user) {
@@ -157,14 +140,14 @@ router.post('/login', async (req, res, next) => {
     }
 
     // Use the authenticate method from passport-local-mongoose to check if the password is correct
-    user.authenticate(password, async (err, result) => {
+    user.authenticate(password, (err, result) => {
         if (err) {
             console.error('Error checking if password is correct:', err);
             return res.status(500).json({ message: 'Internal Server Error' });
         }
 
         if (result) {
-            // Authentication succeeded, log the user in
+            // Authentication succeeded
             req.logIn(user, (err) => {
                 if (err) {
                     console.error('Error during login:', err);
@@ -178,8 +161,7 @@ router.post('/login', async (req, res, next) => {
             return res.status(401).json({ message: 'Incorrect company ID or password' });
         }
     });
-});
-
+})
 
 
 router.get('/isCompanyID', async (req, res) => {

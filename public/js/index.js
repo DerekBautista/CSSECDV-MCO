@@ -3,9 +3,11 @@
 $("#login-show-hide-password").on('click', function() {
     if ($("#login-password").attr('type') === 'password') {
         $("#login-password").attr('type', 'text');
+        // Change the icon to show the eye opened
         $("#login-show-hide-password").html('<i class="fas fa-eye"></i>');
     } else {
         $("#login-password").attr('type', 'password');
+        // Change the icon to show the eye closed
         $("#login-show-hide-password").html('<i class="fas fa-eye-slash"></i>');
     }
 });
@@ -29,22 +31,12 @@ $("#login-btn").on('click', async function (event){
         $('#login-submit-btn').prop('disabled', false);
         $(`#login-error-message`).css('display', 'none')
     }
-});
+})
 
 $("#login-submit-btn").on('click', async function (event) {
     event.preventDefault();
     const companyID = $("#login-companyID").val();
     const loginPassword = $("#login-password").val();
-
-    // Validate data length
-    if (companyID.length !== 10) {
-        $("#login-companyID-message").html('Company ID must be exactly 10 characters long.').css('display', 'block');
-        return;
-    }
-    if (loginPassword.length < 8) {
-        $("#login-password-message").html('Password must be at least 8 characters long.').css('display', 'block');
-        return;
-    }
 
     // Define an object to map field IDs to error message IDs
     const fieldErrorMap = {
@@ -76,8 +68,10 @@ $("#login-submit-btn").on('click', async function (event) {
         });
 
         const companyIdData = await companyIDResponse.json();
-
+        
+        
         if (!companyIdData.authenticated) {
+            // Show error if company doesn't exist
             if(companyIdData.remainingAttempts > 0)
                 $("#login-error-message").html('Failed Login. (' + companyIdData.remainingAttempts + ' attempts remaining.)').css('display', 'block');
             else{
@@ -89,11 +83,12 @@ $("#login-submit-btn").on('click', async function (event) {
             }
         }
         else{
+            // Check if the password is correct
             const passwordResponse = await fetch(`/user/isPassword?companyID=${companyID}&password=${loginPassword}`, {
                 method: 'GET'
             });
 
-            const passwordData = await passwordResponse.json();
+            const passwordData = await passwordResponse.json()
 
             if(!passwordData.authenticated){
                 if(passwordData.remainingAttempts > 0)
@@ -161,33 +156,12 @@ $("#register-submit-btn").on('click', async function (event) {
         'register-confirmPassword': 'register-confirmPassword-message'
     };
 
-    const alphabeticPattern = /^[A-Za-z]+$/;
-
-    // Iterate through each field and check if it's empty or contains invalid characters
+    // Iterate through each field and check if it's empty
     let hasErrors = false;
     for (const [field, errorMessage] of Object.entries(fieldErrorMap)) {
         const value = $(`#${field}`).val();
-        
         if (value === '') {
             $(`#${errorMessage}`).html('Please fill out this field.').css('display', 'block');
-            hasErrors = true;
-        } else if (field === 'register-firstName' && value.length < 1) {
-            $(`#${errorMessage}`).html('First name must be at least 1 character long.').css('display', 'block');
-            hasErrors = true;
-        } else if (field === 'register-lastName' && value.length < 1) {
-            $(`#${errorMessage}`).html('Last name must be at least 1 character long.').css('display', 'block');
-            hasErrors = true;
-        } else if (field === 'register-firstName' && value.length > 50) {
-            $(`#${errorMessage}`).html('First name must be no more than 50 characters long.').css('display', 'block');
-            hasErrors = true;
-        } else if (field === 'register-lastName' && value.length > 50) {
-            $(`#${errorMessage}`).html('Last name must be no more than 50 characters long.').css('display', 'block');
-            hasErrors = true;
-        } else if (field === 'register-firstName' && !alphabeticPattern.test(value)) {
-            $(`#${errorMessage}`).html('First name must only contain alphabetic characters.').css('display', 'block');
-            hasErrors = true;
-        } else if (field === 'register-lastName' && !alphabeticPattern.test(value)) {
-            $(`#${errorMessage}`).html('Last name must only contain alphabetic characters.').css('display', 'block');
             hasErrors = true;
         } else if (field === 'register-companyID' && value.length !== 10) {
             $(`#${errorMessage}`).html('Company ID must be 10 characters long.').css('display', 'block');
@@ -195,13 +169,14 @@ $("#register-submit-btn").on('click', async function (event) {
         } else if (field === 'register-password' && value.length < 8) {
             $(`#${errorMessage}`).html('Password must be at least 8 characters long.').css('display', 'block');
             hasErrors = true;
-        } else if (field === 'register-confirmPassword' && (value !== registerPassword)) {
+        } else if (field === 'register-confirmPassword' && value.length > 8 && value !== registerConfirmPassword) {
             $(`#${errorMessage}`).html('Passwords do not match.').css('display', 'block');
             hasErrors = true;
         } else {
             $(`#${errorMessage}`).css('display', 'none');
         }
     }
+
     // Check if there are errors before making the fetch request
     if (hasErrors) {
         return;
