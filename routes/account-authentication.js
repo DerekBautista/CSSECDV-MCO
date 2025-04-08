@@ -173,6 +173,7 @@ router.get('/isCompanyID', async (req, res) => {
         if (companyIDExists) {
             res.status(200).json({ authenticated: true });
         } else {
+            console.log('AUTHENTICATION FAILED')
             const ip = req.ip;
             const {remainingAttempts, lockedUntil} = await checkIpAttempts(ip)
             res.status(200).json({ authenticated: false, remainingAttempts: remainingAttempts, lockedUntil: lockedUntil});
