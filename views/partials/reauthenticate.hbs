@@ -1,0 +1,12 @@
+<div class="main-container">
+    <div class="bottom-data">
+        <div class="reports">
+            <form id="verify-form" action="/reauthenticate" method="POST">
+                <input id="verify-password" type="password" name="password" required placeholder="Enter your password" required>
+                <input type="hidden" name="redirect" value="{{redirect}}">
+                <button id="verify-submit-btn" type="submit">Verify</button>
+                <div class="alert alert-danger mt-3" id="verify-error-message" style="display:none"> <role="alert"></div>
+            </form>
+        </div>
+    </div>
+</div>
