@@ -1,4 +1,4 @@
-/* 
+1/* 
     acccount-authentication.js
     This file handles the registration and login of users.
 */
@@ -8,8 +8,29 @@ const bcrypt = require('bcrypt');
 const express = require('express');
 const router = express.Router();
 const User = require('../server/schema/Users');
+const FailedAttempts = require('../server/schema/FailedAttempts');
 const passport = require('passport')
 
+
+async function checkIpAttempts(ip){
+    console.log("IP: " + ip)
+    const ipInstance = await FailedAttempts.findOne({ip: ip});
+
+    if (ipInstance){
+       return await ipInstance.deductAttempts()
+    }
+    else{
+        const newIpInstance = new FailedAttempts({
+            ip: ip,
+            remainingAttempts: 4, // Assuming 5 total attempts (5-1 = 4 remaining)
+            totalFailedAttempts: 1,
+            isLocked: false
+        });
+        await newIpInstance.save();
+        //return newIpInstance.remainingAttempts;
+        return { remainingAttempts: newIpInstance.remainingAttempts, lockedUntil: 0};
+    }
+}
 
 // Function to handle user login and registration
 router.post('/register', async (req, res, next) => {
@@ -47,7 +68,7 @@ router.post('/register', async (req, res, next) => {
         if (companyIDExists) {
             return res.status(400).json({ message: 'Company ID already exists' });
         }
-
+ 
         // Check if password is at least 8 characters long
         if (password.length < 8) {
             return res.status(400).json({ message: 'Password must be at least 8 characters long' });
@@ -147,28 +168,11 @@ router.get('/isCompanyID', async (req, res) => {
     try {
         const companyID = req.query.companyID;
         console.log('Received company ID:', companyID);
-
         const companyIDExists = await User.findOne({ companyID: companyID });
         //console.log('Company ID exists:', companyIDExists);
-        res.status(200).json({ exists: !!companyIDExists });
-        /**
-         * TODO:
-         * 
-         * 1. Insert an if else statement where if companyID doesnt exist
-         *      - check db if ip is already in the failedattempts schema.
-         *      if not existing, create one for it and add a 1
-         *      else
-         *          add +1 to the ip's number of attempts
-         *          if 5, lock it out
-         *     
-         *     !!!Upon opening the webapp, check if the ip is in the failedattempts schema and lock it out already if it has 5 attempts already
-         *      
-         */
-        
         if (companyIDExists) {
             res.status(200).json({ authenticated: true });
         } else {
-            console.log('AUTHENTICATION FAILED')
             const ip = req.ip;
             const {remainingAttempts, lockedUntil} = await checkIpAttempts(ip)
             res.status(200).json({ authenticated: false, remainingAttempts: remainingAttempts, lockedUntil: lockedUntil});
@@ -185,7 +189,7 @@ router.get('/isPassword', async (req, res) => {
         // Get the company ID and password from the request body
         const companyID = req.query.companyID;
         const password = req.query.password;
-
+        
         // Find the user with the company ID
         const user = await User.findOne({ companyID: companyID });
 
@@ -195,24 +199,12 @@ router.get('/isPassword', async (req, res) => {
                 console.error('Error checking if password is correct:', err);
                 return res.status(500).json({ message: 'Internal Server Error' });
             }
-
             if (result) {
                 res.status(200).json({ authenticated: true});
             } else {
-                        /**
-         * TODO:
-         * 
-         * 1. Insert an if else statement where if companyID doesnt exist
-         *      - check db if ip is already in the failedattempts schema.
-         *      if not existing, create one for it and add a 1
-         *      else
-         *          add +1 to the ip's number of attempts
-         *          if 5, lock it out
-         *     
-         *     !!!Upon opening the webapp, check if the ip is in the failedattempts schema and lock it out already if it has 5 attempts already
-         *      
-         */
-                res.status(200).json({ authenticated: false});
+                const ip = req.ip;
+                const {remainingAttempts, lockedUntil} = await checkIpAttempts(ip)
+                res.status(200).json({ authenticated: false, remainingAttempts: remainingAttempts, lockedUntil: lockedUntil});
             }
         });
     } catch (error) {
@@ -221,7 +213,15 @@ router.get('/isPassword', async (req, res) => {
     }
 });
 
-
+router.get('/checkIpLockout', async (req, res) => {
+    const ip = req.ip
+    const ipInstance = await FailedAttempts.findOne({ip: ip});
+    if (!ipInstance) {
+        return res.json({ isLocked: false });
+    }
+    const {isLocked, lockedUntil} = ipInstance.isLockedOut()
+    return res.json({ isLocked: isLocked, lockedUntil: lockedUntil });
+})
 
 // Function to handle user logout
 router.get('/logout', (req, res) => {   
