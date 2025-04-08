@@ -1,4 +1,28 @@
 /* Login Form */
+async function setLockoutTimer(lockedUntil){
+    let secondsRemaining = Math.max(0, Math.floor((new Date(lockedUntil) - new Date()) / 1000));
+
+    const errorMessage = $("#login-error-message");
+    const updateMessage = () => {
+        errorMessage.html(`No more attempts. IP is locked out. Try again in ${secondsRemaining} seconds`).css('display', 'block');
+    };
+    
+    updateMessage(); 
+    $('#login-submit-btn').prop('disabled', true);
+    
+    const countdownInterval = setInterval(() => {
+        secondsRemaining--;
+    
+        if (secondsRemaining <= 0) {
+            clearInterval(countdownInterval);
+            $(`#login-error-message`).css('display', 'none')
+            $('#login-submit-btn').prop('disabled', false); 
+        } else {
+            updateMessage(); // update every second
+        }
+    }, 1000);
+}
+
 // Show/hide password
 $("#login-show-hide-password").on('click', function() {
     if ($("#login-password").attr('type') === 'password') {
@@ -12,6 +36,27 @@ $("#login-show-hide-password").on('click', function() {
     }
 });
 
+$("#login-btn").on('click', async function (event){
+    try{
+        const ipPromise = await fetch(`/user/checkIpLockout`,{
+            method: 'GET'
+        });
+        
+        const response = await ipPromise.json();
+        const ipIsLockedout = response.isLocked;
+        console.log("ip is locked?: " + ipIsLockedout)
+        if(ipIsLockedout){
+            const lockedUntil = new Date(response.lockedUntil)
+            setLockoutTimer(lockedUntil)
+        }
+        else{
+            $('#login-submit-btn').prop('disabled', false);
+            $(`#login-error-message`).css('display', 'none')
+        }
+    }catch (error) {
+        console.error("Error checking IP lockout:", error);
+    }
+})
 
 $("#login-submit-btn").on('click', async function (event) {
     event.preventDefault();
@@ -52,8 +97,12 @@ $("#login-submit-btn").on('click', async function (event) {
 
         if (!data.exists) {
             // Show error if company doesn't exist
-            $("#login-error-message").html('Incorrect company ID or password').css('display', 'block').css('display', 'block');;
-            return;
+            if(companyIdData.remainingAttempts > 0)
+                $("#login-error-message").html('Failed Login. (' + companyIdData.remainingAttempts + ' attempts remaining.)').css('display', 'block');
+            else{
+                const lockedUntil = new Date(companyIdData.lockedUntil);
+                setLockoutTimer(lockedUntil)
+            }
         }
         else{
             // Check if the password is correct
@@ -62,7 +111,12 @@ $("#login-submit-btn").on('click', async function (event) {
             });
             const passwordData = await passwordResponse.json()
             if(!passwordData.authenticated){
-                $("#login-error-message").html('Incorrect company ID or password').css('display', 'block');
+                if(passwordData.remainingAttempts > 0)
+                    $("#login-error-message").html('Failed Login. (' + passwordData.remainingAttempts + ' attempts remaining.)').css('display', 'block');
+                else{
+                    const lockedUntil = new Date(passwordData.lockedUntil);
+                    setLockoutTimer(lockedUntil)
+                }
             }
             else{
                 $("#login-form").submit();
@@ -138,7 +192,8 @@ $("#register-submit-btn").on('click', async function (event) {
         } else {
             $(`#${errorMessage}`).css('display', 'none');
         }
-    }
+    }   
+
 
     // Check if there are errors before making the fetch request
     if (hasErrors) {

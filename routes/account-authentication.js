@@ -11,6 +11,26 @@ const User = require('../server/schema/Users');
 const passport = require('passport')
 
 
+async function checkIpAttempts(ip){
+    console.log("IP: " + ip)
+    const ipInstance = await FailedAttempts.findOne({ip: ip});
+
+    if (ipInstance){
+       return await ipInstance.deductAttempts()
+    }
+    else{
+        const newIpInstance = new FailedAttempts({
+            ip: ip,
+            remainingAttempts: 4, // Assuming 5 total attempts (5-1 = 4 remaining)
+            //totalFailedAttempts: 1,
+            isLocked: false
+        });
+        await newIpInstance.save();
+        //return newIpInstance.remainingAttempts;
+        return { remainingAttempts: newIpInstance.remainingAttempts, lockedUntil: 0};
+    }
+}
+
 // Function to handle user login and registration
 router.post('/register', async (req, res, next) => {
     try {
