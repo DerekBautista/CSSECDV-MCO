@@ -10,6 +10,7 @@ const FailedAttempt = new mongoose.Schema({
     createdAt: { type: Date, expires: '24h' } 
 })
 
+//This is the lockout timer. If time is up it will delete the document.
 FailedAttempt.index({ lockedUntil: 1 }, { expireAfterSeconds: 0 });
 
 FailedAttempt.methods.lockUser = async function(minutes) {
@@ -34,6 +35,12 @@ FailedAttempt.methods.deductAttempts = async function () {
     return { remainingAttempts: this.remainingAttempts, lockedUntil: 0};
 };
 
+//might be used soon.
+FailedAttempt.methods.resetAttempts = async function () {
+    remainingAttempts = 0;
+    this.lockedUntil = undefined;
+    await this.save()
+}
 const failedAttempt = mongoose.model('FailedAttempt', FailedAttempt);
 
 module.exports = failedAttempt;

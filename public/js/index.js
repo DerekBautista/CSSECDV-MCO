@@ -1,4 +1,28 @@
 /* Login Form */
+async function setLockoutTimer(lockedUntil){
+    let secondsRemaining = Math.max(0, Math.floor((new Date(lockedUntil) - new Date()) / 1000));
+
+    const errorMessage = $("#login-error-message");
+    const updateMessage = () => {
+        errorMessage.html(`No more attempts. IP is locked out. Try again in ${secondsRemaining} seconds`).css('display', 'block');
+    };
+    
+    updateMessage(); 
+    $('#login-submit-btn').prop('disabled', true);
+    
+    const countdownInterval = setInterval(() => {
+        secondsRemaining--;
+    
+        if (secondsRemaining <= 0) {
+            clearInterval(countdownInterval);
+            $(`#login-error-message`).css('display', 'none')
+            $('#login-submit-btn').prop('disabled', false); 
+        } else {
+            updateMessage(); // update every second
+        }
+    }, 1000);
+}
+
 // Show/hide password
 $("#login-show-hide-password").on('click', function() {
     if ($("#login-password").attr('type') === 'password') {
@@ -13,24 +37,26 @@ $("#login-show-hide-password").on('click', function() {
 });
 
 $("#login-btn").on('click', async function (event){
-    const ipPromise = await fetch(`/user/checkIpLockout`,{
-        method: 'GET'
-    });
+    try{
+        const ipPromise = await fetch(`/user/checkIpLockout`,{
+            method: 'GET'
+        });
+        
+        const response = await ipPromise.json();
+        const ipIsLockedout = response.isLocked;
+        console.log("ip is locked?: " + ipIsLockedout)
+        if(ipIsLockedout){
+            const lockedUntil = new Date(response.lockedUntil)
+            setLockoutTimer(lockedUntil)
+        }
+        else{
+            $('#login-submit-btn').prop('disabled', false);
+            $(`#login-error-message`).css('display', 'none')
+        }
+    }catch (error) {
+        console.error("Error checking IP lockout:", error);
+    }
     
-    const response = await ipPromise.json();
-    const ipIsLockedout = response.isLocked;
-    console.log("ip is locked?: " + ipIsLockedout)
-    if(ipIsLockedout){
-        const lockedUntil = new Date(response.lockedUntil)
-        const now = new Date();
-        const secondsRemaining = Math.max(0, Math.floor((lockedUntil - now) / 1000));
-        $('#login-submit-btn').prop('disabled', true);
-        $(`#login-error-message`).html('Ip is locked out. Try again in ' + secondsRemaining + ' seconds').css('display', 'block')
-    }
-    else{
-        $('#login-submit-btn').prop('disabled', false);
-        $(`#login-error-message`).css('display', 'none')
-    }
 })
 
 $("#login-submit-btn").on('click', async function (event) {
@@ -76,10 +102,7 @@ $("#login-submit-btn").on('click', async function (event) {
                 $("#login-error-message").html('Failed Login. (' + companyIdData.remainingAttempts + ' attempts remaining.)').css('display', 'block');
             else{
                 const lockedUntil = new Date(companyIdData.lockedUntil);
-                const now = new Date();
-                const secondsRemaining = Math.max(0, Math.floor((lockedUntil - now) / 1000));
-                $("#login-error-message").html('No more attempts. Ip is locked out. Try again in ' + secondsRemaining + ' seconds').css('display', 'block');
-                $('#login-submit-btn').prop('disabled', true);
+                setLockoutTimer(lockedUntil)
             }
         }
         else{
@@ -95,10 +118,7 @@ $("#login-submit-btn").on('click', async function (event) {
                     $("#login-error-message").html('Failed Login. (' + passwordData.remainingAttempts + ' attempts remaining.)').css('display', 'block');
                 else{
                     const lockedUntil = new Date(passwordData.lockedUntil);
-                    const now = new Date();
-                    const secondsRemaining = Math.max(0, Math.floor((lockedUntil - now) / 1000));
-                    $("#login-error-message").html('No more attempts. Ip is locked out. Try again in ' + secondsRemaining + ' seconds').css('display', 'block');
-                    $('#login-submit-btn').prop('disabled', true);
+                    setLockoutTimer(lockedUntil)
                 }
             }
             else{
@@ -175,7 +195,7 @@ $("#register-submit-btn").on('click', async function (event) {
         } else {
             $(`#${errorMessage}`).css('display', 'none');
         }
-    }
+    }   
 
     // Check if there are errors before making the fetch request
     if (hasErrors) {

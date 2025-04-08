@@ -23,7 +23,7 @@ async function checkIpAttempts(ip){
         const newIpInstance = new FailedAttempts({
             ip: ip,
             remainingAttempts: 4, // Assuming 5 total attempts (5-1 = 4 remaining)
-            totalFailedAttempts: 1,
+            //totalFailedAttempts: 1,
             isLocked: false
         });
         await newIpInstance.save();
