@@ -11,26 +11,6 @@ const User = require('../server/schema/Users');
 const passport = require('passport')
 
 
-async function checkIpAttempts(ip){
-    console.log("IP: " + ip)
-    const ipInstance = await FailedAttempts.findOne({ip: ip});
-
-    if (ipInstance){
-       return await ipInstance.deductAttempts()
-    }
-    else{
-        const newIpInstance = new FailedAttempts({
-            ip: ip,
-            remainingAttempts: 4, // Assuming 5 total attempts (5-1 = 4 remaining)
-            //totalFailedAttempts: 1,
-            isLocked: false
-        });
-        await newIpInstance.save();
-        //return newIpInstance.remainingAttempts;
-        return { remainingAttempts: newIpInstance.remainingAttempts, lockedUntil: 0};
-    }
-}
-
 // Function to handle user login and registration
 router.post('/register', async (req, res, next) => {
     try {
@@ -170,7 +150,6 @@ router.get('/isCompanyID', async (req, res) => {
 
         const companyIDExists = await User.findOne({ companyID: companyID });
         //console.log('Company ID exists:', companyIDExists);
-<<<<<<< HEAD
         res.status(200).json({ exists: !!companyIDExists });
         /**
          * TODO:
@@ -186,7 +165,6 @@ router.get('/isCompanyID', async (req, res) => {
          *      
          */
         
-=======
         if (companyIDExists) {
             res.status(200).json({ authenticated: true });
         } else {
@@ -195,7 +173,6 @@ router.get('/isCompanyID', async (req, res) => {
             const {remainingAttempts, lockedUntil} = await checkIpAttempts(ip)
             res.status(200).json({ authenticated: false, remainingAttempts: remainingAttempts, lockedUntil: lockedUntil});
         }
->>>>>>> main
     } catch (error) {
         console.error('Error checking if company ID exists:', error);
         res.status(500).json({ message: 'Internal Server Error' });
