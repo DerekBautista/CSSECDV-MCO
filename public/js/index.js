@@ -107,22 +107,26 @@ $("#login-submit-btn").on('click', async function (event) {
         }
         else{
             // Check if the password is correct
-            const passwordResponse = await fetch(`/user/isPassword?companyID=${companyID}&password=${loginPassword}`, {
-                method: 'GET'
-            });
-
-            const passwordData = await passwordResponse.json()
-
-            if(!passwordData.authenticated){
-                if(passwordData.remainingAttempts > 0)
-                    $("#login-error-message").html('Failed Login. (' + passwordData.remainingAttempts + ' attempts remaining.)').css('display', 'block');
-                else{
-                    const lockedUntil = new Date(passwordData.lockedUntil);
-                    setLockoutTimer(lockedUntil)
+            try{
+                const passwordResponse = await fetch(`/user/isPassword?companyID=${companyID}&password=${loginPassword}`, {
+                    method: 'GET'
+                });
+    
+                const passwordData = await passwordResponse.json()
+    
+                if(!passwordData.authenticated){
+                    if(passwordData.remainingAttempts > 0)
+                        $("#login-error-message").html('Failed Login. (' + passwordData.remainingAttempts + ' attempts remaining.)').css('display', 'block');
+                    else{
+                        const lockedUntil = new Date(passwordData.lockedUntil);
+                        setLockoutTimer(lockedUntil)
+                    }
                 }
-            }
-            else{
-                $("#login-form").submit();
+                else{
+                    $("#login-form").submit();
+                }
+            }catch (err) {
+                console.log("Network error (e.g., server down):", err);
             }
         }
     } catch (err) {
