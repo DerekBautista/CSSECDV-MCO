@@ -170,6 +170,7 @@ router.get('/isCompanyID', async (req, res) => {
 
         const companyIDExists = await User.findOne({ companyID: companyID });
         //console.log('Company ID exists:', companyIDExists);
+<<<<<<< HEAD
         res.status(200).json({ exists: !!companyIDExists });
         /**
          * TODO:
@@ -185,6 +186,16 @@ router.get('/isCompanyID', async (req, res) => {
          *      
          */
         
+=======
+        if (companyIDExists) {
+            res.status(200).json({ authenticated: true });
+        } else {
+            console.log('AUTHENTICATION FAILED')
+            const ip = req.ip;
+            const {remainingAttempts, lockedUntil} = await checkIpAttempts(ip)
+            res.status(200).json({ authenticated: false, remainingAttempts: remainingAttempts, lockedUntil: lockedUntil});
+        }
+>>>>>>> main
     } catch (error) {
         console.error('Error checking if company ID exists:', error);
         res.status(500).json({ message: 'Internal Server Error' });
