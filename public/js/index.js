@@ -56,7 +56,6 @@ $("#login-btn").on('click', async function (event){
     }catch (error) {
         console.error("Error checking IP lockout:", error);
     }
-    
 })
 
 $("#login-submit-btn").on('click', async function (event) {
@@ -196,6 +195,7 @@ $("#register-submit-btn").on('click', async function (event) {
             $(`#${errorMessage}`).css('display', 'none');
         }
     }   
+
 
     // Check if there are errors before making the fetch request
     if (hasErrors) {
