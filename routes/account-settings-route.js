@@ -6,6 +6,8 @@ const passport = require('passport');
 
 router.get('/', (req, res) => {
 
+    console.log('req.user.securityQuestion1.question')
+
 
     res.render('landing-page', { 
         pageTitle: 'Account Settings',
@@ -18,9 +20,14 @@ router.get('/', (req, res) => {
         suffix: req.user.suffix,
         companyID: req.user.companyID,
         securityQuestion1: req.user.securityQuestion1.question,
-        securityQuestion2: req.user.securityQuestion2.question
+        securityQuestion2: req.user.securityQuestion2.question,
+        securityAnswer1: req.user.securityQuestion1.answer,
+        securityAnswer2: req.user.securityQuestion2.answer,
+        userinfo: req.user
     });
 });
+
+
 
 router.post('/passwordchange', async (req, res) => {
     try {
@@ -82,28 +89,12 @@ router.post('/passwordchange', async (req, res) => {
             }
         }
         
-        
         // Update user
         const newPasswordHash = await bcrypt.hash(password, 10);
         
         // Keep last 5 passwords
         const updatedPasswordHistory = [user.password, ...user.passwordHistory || []].slice(0, 5);
         
-        if (security_answer_1 !== req.user.securityQuestion1.answer) {
-            return res.status(400).json({ message: 'Security question 1 answer is not correct' });
-        }
-
-        if (!(security_answer_2 !== req.user.securityQuestion2.answer)) {
-            return res.status(400).json({ message: 'Security question 2 answer is not correct' });
-        }
-
-        if (!(password !== acc_confirm)) {
-            return res.status(400).json({ message: 'Passwords do not match' });
-        }
-
-        if (password.length < 8) {
-            return res.status(400).json({ message: 'Password must be at least 8 characters long' });
-        }
 
         await User.findByIdAndUpdate(req.session.userId, {
             password: newPasswordHash,
@@ -118,4 +109,11 @@ router.post('/passwordchange', async (req, res) => {
         res.status(500).json({ error: 'An error occurred while updating your account' });
     }
 });
+
+router.get('/getuser', (req, res) => {
+    const user = req.body.user;
+
+    res.json(user);
+});
+
 module.exports = router;

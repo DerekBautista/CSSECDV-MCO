@@ -76,7 +76,7 @@
 
                         <div class="mb-3 mt-3">
                             <label for="acc-companyID" class="index-form-label">Company ID</label>
-                            <input type="number" min="0" value="{{ companyID }}" name="acc_companyID" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" id="acc-companyID" class="form-control" placeholder="Enter Company ID" required>
+                            <input type="number" min="0" value="{{ companyID }}" name="acc_companyID" id="acc_companyID" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" id="acc-companyID" class="form-control" placeholder="Enter Company ID" required>
                         </div>
                           <!-- Error Message -->
                             <div class="alert alert-danger mt-3" role="alert" style="display: none;"> </div>
@@ -92,23 +92,27 @@
             <br>
             <div class="account-details-holder password-holder">
             <h1 class="profile-pic-title fw-bold">Password Reset</h1>
-            <form action="/account-settings/passwordchange" method="post" id="edit-account-form">
-            <div class="mb-3 mt-3">
+            <form action="/account-settings/passwordchange" method="post" id="password-change-form">
                 <h5 class="form-label">Password Reset Questions</h5>
-                <p class="form-label">Please select questions that have unique answers only you would know.</p>
                 
                 <div class="mb-3">
                     <label for="security-question-1" class="form-label">Security Question 1</label>
                     <p class="form-label">{{ securityQuestion1 }}</p>
                     <input type="text" class="form-control mt-2" name="security_answer_1" id="security_answer_1" placeholder="Your answer" required>
+
+                     <!-- Error Message -->
+                    <div class="alert alert-danger mt-3" id="securityAnswer1-message" style="display:none" role="alert"></div>
                 </div>
 
                 <div class="mb-3">
                     <label for="security-question-2" class="form-label">Security Question 2</label>
                     <p class="form-label">{{ securityQuestion2 }}</p>
                     <input type="text" class="form-control mt-2" name="security_answer_2"  id="security_answer_2" placeholder="Your answer" required>
+
+                    <!-- Error Message -->
+                    <div class="alert alert-danger mt-3" id="securityAnswer2-message" style="display:none" role="alert"></div>
                 </div>
-            </div>
+            
 
             <!-- Password Change Section -->
             <div class="mb-3 mt-3">
@@ -119,23 +123,21 @@
                         <i class="fas fa-eye-slash" aria-hidden="true"></i>
                     </span>
                 </div>
-                <small class="text-muted">Password must be different from your last 5 passwords</small>
-                
                 <!-- Error Message -->
-                <div class="alert alert-danger mt-3" role="alert" style="display: none;"></div>
+                <div class="alert alert-danger mt-3" id="newPassword-message" role="alert" style="display: none;"></div>
             </div>
 
             <div class="mb-3 mt-3">
-                <label for="acc-confirmPassword" class="index-form-label">Confirm New Password</label>
+                <label for="acc-confirm-password" class="index-form-label">Confirm New Password</label>
                 <div class="input-group">
                     <input type="password" name="acc_confirm" id="acc-confirm-password" class="form-control" placeholder="Confirm New Password" required>
                     <span class="input-group-text" id="acc-confirm-show-hide-password">
                         <i class="fas fa-eye-slash" aria-hidden="true"></i>
                     </span>
                 </div>
-                
+
                 <!-- Error Message -->
-                <div class="alert alert-danger mt-3" role="alert" style="display: none;"></div>
+                <div class="alert alert-danger mt-3" id="confirmPassword-message" role="alert" style="display: none;"></div>
             </div>
 
             <div class="mb-3 mt-3">
@@ -148,7 +150,7 @@
                 </div>
                 
                 <!-- Error Message -->
-                <div class="alert alert-danger mt-3" id="password-change-message" role="alert" style="display: none;"></div>
+                <div class="alert alert-danger mt-3" id="currentPassword-message" role="alert" style="display: none;"></div>
             </div>
 
             <div class="text-center">
@@ -157,22 +159,15 @@
         </form>
     </div>
     </div>
+
+    <input type="text" name="securityAnswer1Hidden" id="securityAnswer1Hidden" value=" {{ securityAnswer1 }} " hidden>
+    <input type="text" name="securityAnswer2Hidden" id="securityAnswer2Hidden" value=" {{ securityAnswer2 }} " hidden>
+
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Password show/hide functionality
-    document.getElementById('acc-show-hide-password').addEventListener('click', function() {
-        togglePasswordVisibility('acc-password', this);
-    });
-    
-    document.getElementById('acc-confirm-show-hide-password').addEventListener('click', function() {
-        togglePasswordVisibility('acc-confirm-password', this);
-    });
-    
-    document.getElementById('current-show-hide-password').addEventListener('click', function() {
-        togglePasswordVisibility('current-password', this);
-    });
 
     function togglePasswordVisibility(inputId, element) {
         const input = document.getElementById(inputId);
@@ -199,14 +194,6 @@ document.addEventListener('DOMContentLoaded', function() {
             el.textContent = '';
         });
         
-        // Validate password match
-        const newPassword = document.getElementById('acc-password').value;
-        const confirmPassword = document.getElementById('acc-confirm-password').value;
-        
-        if (newPassword !== confirmPassword) {
-            showError('Passwords do not match', document.querySelector('#acc-confirm-password').closest('.mb-3').querySelector('.alert-danger'));
-            return;
-        }
         
         // Additional validation would be handled server-side
         this.submit();
