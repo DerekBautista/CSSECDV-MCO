@@ -28,7 +28,7 @@
                 <li {{#if (eq activePage 'project-list')}} class="active" {{/if}}>
                     <a href="/project-list"><i class="fa fa-solid fa-table-list"></i>Project List</a>
                 </li>
-                <li {{#if (eq activePage 'employee-list')}} class="active" {{/if}}>
+                <li {{#if (and (eq activePage 'employee-list') (eq usertype 'ADMIN'))}} class="active" {{/if}}>
                     <a href="/employee-list"><i class="fa fa-solid fa-users"></i>Employee List</a>
                 </li>
                 <li {{#if (eq activePage 'account-settings')}} class="active" {{/if}}>

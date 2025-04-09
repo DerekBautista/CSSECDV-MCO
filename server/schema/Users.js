@@ -1,6 +1,8 @@
 const mongoose = require('mongoose')
 const passportLocalMongoose = require('passport-local-mongoose')
 
+// USER TYPES: ADMIN, EMPLOYEE, PROJ-OWN
+
 const userSchema = mongoose.Schema({
     firstName: {
         type: String, 
@@ -18,10 +20,10 @@ const userSchema = mongoose.Schema({
         type: String, 
         require: false
     },
-    // userPosition: {
-    //     type: String, 
-    //     require: true
-    // },
+    userType: {
+        type: String, 
+        default: "EMPLOYEE"
+    },
     companyID: {
         type: Number, 
         require: true,
