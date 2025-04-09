@@ -3,7 +3,10 @@
 ### First, install the Electron Framework in your local computer
 npm install -g electron
 
-> Run this code in your terminal where you save the clone of this github repository.
+### Also install mongoose 8.0.1
+npm install mongoose@8.0.1
+
+### > Run this code in your terminal where you save the clone of this github repository.
 ```
 npm ci
 ```
