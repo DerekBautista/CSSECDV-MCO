@@ -139,7 +139,6 @@ function verifyLogin(req, res, next) {
         console.log('User not logged in!')
         res.render('index', {message: 'User not logged in'})
     } else {
-        //app.use('/reauthenticate', reauthenticateRoute )
         next();
     }
 }
