@@ -123,38 +123,50 @@ let hasErrors = false;
         }
     }
 
-    try {
-        const passwordCheckRes = await fetch('/passwordchange', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ companyID, password: currentPassword })
-        });
-    
-        const passwordCheckData = await passwordCheckRes.json();
-        
-    for (const [field, errorMessage] of Object.entries(fieldErrorMap)) {
-        if (field === 'currentPassword' && !passwordCheckRes.ok) {
-            $(`#${errorMessage}`).html('Incorrect password.').css('display', 'block');
-            hasErrors = true;
-        } else {
-            $(`#${errorMessage}`).css('display', 'none');
-        }
-    }
-    
-    } catch (error) {
-        console.error('Error verifying password:', error);
-        $('#currentPassword-message').html('Server error. Please try again later.').css('display', 'block');
-        hasErrors = true;
-    }
-
     // Check if there are errors before making the fetch request
     if (hasErrors) {
         return;
     }
     else {
-        //$("#password-change-form").submit();
+        const passwordCheckRes = await fetch('/account-settings/passwordchange', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ csecurity_answer_1:securityAnswer1,
+                security_answer_2: securityAnswer2,
+                password: newPassword,
+                acc_confirm: confirmPassword,
+                current_password: currentPassword })
+        });
+
+        console.log(passwordCheckRes.status);
+
+        const message = await passwordCheckRes.json();
+
+        console.log(message);
+        console.log(message.message);
+
+        switch(passwordCheckRes.status)
+        {
+            case 200:
+                console.log("switch: ", message.message);
+                window.alert("Successfully changed password");
+                location.reload();
+            break;
+            case 401:
+                console.log("switch: ", message.message);
+                $('#currentPassword-message').html(message.message).css('display', 'block');
+            break;
+            case 400:
+                console.log("switch: ", message.message);
+                $('#currentPassword-message').html(message.message).css('display', 'block');
+            break;
+            case 500:
+                console.log("switch: ", message.message);
+                $('#currentPassword-message').html(message.message).css('display', 'block');
+            break;
+        }
     }
     
 });

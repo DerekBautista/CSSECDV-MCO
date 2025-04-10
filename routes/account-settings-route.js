@@ -65,7 +65,7 @@ router.post('/passwordchange', async (req, res) => {
                 });
             } else {
                 // Authentication failed
-                return res.status(401).json({ message: 'Incorrect password' });
+                return res.status(400).json({ message: 'Incorrect password' });
             }
         });
         
@@ -79,15 +79,15 @@ router.post('/passwordchange', async (req, res) => {
         // }
         
         // 2.1.11 Prevent password change if last change was less than 24 hours ago
-        if (user.lastPasswordChange) {
-            const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-            if (user.lastPasswordChange > oneDayAgo) {
-                return res.status(400).json({ 
-                    error: 'Password can only be changed once per day',
-                    nextChangeTime: user.lastPasswordChange.getTime() + 24 * 60 * 60 * 1000
-                });
-            }
-        }
+        // if (user.lastPasswordChange) {
+        //     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        //     if (user.lastPasswordChange > oneDayAgo) {
+        //         return res.status(400).json({ 
+        //             error: 'Password can only be changed once per day',
+        //             nextChangeTime: user.lastPasswordChange.getTime() + 24 * 60 * 60 * 1000
+        //         });
+        //     }
+        // }
         
         // Update user
         const newPasswordHash = await bcrypt.hash(password, 10);
@@ -102,8 +102,7 @@ router.post('/passwordchange', async (req, res) => {
             lastPasswordChange: new Date()
         });
         
-        
-        res.redirect('/landing-page');
+        res.status(200);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'An error occurred while updating your account' });
