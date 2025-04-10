@@ -82,7 +82,7 @@ router.get('/', async (req, res) => {
         totalProjects: totalProjects,
         totalEmployees: totalEmployees,
         totalDeployments: totalDeployments,
-        totalRate: totalRate
+        totalRate: totalRate,
     });
 });
 
