@@ -210,6 +210,9 @@ $("#register-submit-btn").on('click', async function (event) {
         } else if (field === 'register-password' && value.length < 8) {
             $(`#${errorMessage}`).html('Password must be at least 8 characters long.').css('display', 'block');
             hasErrors = true;
+        } else if (field === 'register-password' && !/(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9])/.test(value)) {
+            $(`#${errorMessage}`).html('Password must include at least one lowercase letter, one number, and one special character.').css('display', 'block');
+            hasErrors = true;
         } else if (field === 'register-confirmPassword' && (value !== registerPassword)) {
             $(`#${errorMessage}`).html('Passwords do not match.').css('display', 'block');
             hasErrors = true;
