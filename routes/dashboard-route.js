@@ -80,6 +80,8 @@ router.get('/', async (req, res) => {
         totalDeployments: totalDeployments,
         totalRate: totalRate
     }*/
+    
+
     res.render('landing-page', { 
         pageTitle: 'Dashboard',
         partial: 'dashboard',
@@ -92,6 +94,8 @@ router.get('/', async (req, res) => {
         totalRate: totalRate
     });
 })
+
+
 
 
 module.exports = router;

@@ -48,64 +48,55 @@ router.post('/passwordchange', async (req, res) => {
         // 1. Verify current password
         const user = await User.findOne({ companyID: req.user.companyID });
 
-        user.authenticate(password, (err, result) => {
+        user.authenticate(current_password, (err, result) => {
             if (err) {
                 console.error('Error checking if password is correct:', err);
                 return res.status(500).json({ message: 'Internal Server Error' });
             }
     
             if (result) {
-                // Authentication succeeded
-                req.logIn(user, (err) => {
-                    if (err) {
-                        console.error('Error during login:', err);
-                        return next(err);
-                    }
-                    console.log('Authentication succeeded');
-                });
+
             } else {
                 // Authentication failed
                 return res.status(400).json({ message: 'Incorrect password' });
             }
         });
+
+        if(password == req.user.passwordHistory)
+        {
+            return res.status(400).json({ message: 'Cannot use previous password'});
+        }
         
-        // 2.1.10 Prevent password re-use (check against last 5 passwords)
-        // FIX THIS LATER
-        // const lastPasswords = user.passwordHistory || [];
-        // for (const oldHash of lastPasswords) {
-        //     if (await bcrypt.compare(password, oldHash)) {
-        //         return res.status(400).json({ error: 'Cannot use a previously used password' });
-        //     }
-        // }
-        
-        // 2.1.11 Prevent password change if last change was less than 24 hours ago
-        // if (user.lastPasswordChange) {
-        //     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-        //     if (user.lastPasswordChange > oneDayAgo) {
-        //         return res.status(400).json({ 
-        //             error: 'Password can only be changed once per day',
-        //             nextChangeTime: user.lastPasswordChange.getTime() + 24 * 60 * 60 * 1000
-        //         });
-        //     }
-        // }
+        console.log(req.user.lastPasswordChange instanceof Date);
+
+
+        if (req.user.lastPasswordChange) {
+            const now = +new Date();
+            const oneday = 60 * 60 * 24 * 1000;
+            if ((now - req.user.lastPasswordChange) < oneday) {
+                 return res.status(400).json({ message: 'Password can only be changed after 24 hours'});
+            }
+        }
         
         // Update user
-        const newPasswordHash = await bcrypt.hash(password, 10);
-        
-        // Keep last 5 passwords
-        const updatedPasswordHistory = [user.password, ...user.passwordHistory || []].slice(0, 5);
-        
-
-        await User.findByIdAndUpdate(req.session.userId, {
-            password: newPasswordHash,
-            passwordHistory: updatedPasswordHistory,
+        const updateUser = await User.findOneAndUpdate({companyID: req.user.companyID}, {
+            passwordHistory: current_password,
             lastPasswordChange: new Date()
         });
+       
+        const updatePassword = await User.findOne({ companyID: req.user.companyID });
+
+        updatePassword.changePassword(current_password, password, function (err){
+            if(!err){
+                return res.status(200).json({ message: 'password reset successful'})
+            } else {
+                console.log(err);
+            }
+        });
         
-        res.status(200);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'An error occurred while updating your account' });
+        res.status(500).json({ message: 'An error occurred while updating your account' });
     }
 });
 

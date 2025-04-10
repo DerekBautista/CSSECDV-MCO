@@ -71,7 +71,26 @@ router.get('/', async (req, res) => {
     const totalProjects = await getTotalProjects();
     const totalEmployees = await getTotalEmployees();
     const totalDeployments = await getTotalDeployments();
-    const totalRate = await getTotalRate();
+    const totalRate = await getTotalRate(); 
+
+    /**
+     * 2.1.12
+     * When user clicks login button after entering company id and password, get the account that is being logged into and add the current date
+     * 
+     * in Log in route:
+     * 
+     * const now = +new Date()
+     * const user = User.findOneandUpdate({CompanyId: CompanyIDinput}, {LastLoginDate: now})
+     *
+     * When the user successfully logs in to the account. An alert/notification will pop up
+     * 
+     * in landing page js :
+     * 
+     * const lastLogin = req.user.lastLoginDate
+     * 
+     * then display on hbs
+     * 
+     */
     
     res.render('landing-page', { 
         pageTitle: 'Dashboard',

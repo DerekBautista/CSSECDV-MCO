@@ -144,28 +144,36 @@ let hasErrors = false;
 
         const message = await passwordCheckRes.json();
 
-        console.log(message);
-        console.log(message.message);
-
         switch(passwordCheckRes.status)
         {
             case 200:
-                console.log("switch: ", message.message);
                 window.alert("Successfully changed password");
-                location.reload();
-            break;
+                for (const [field, errorMessage] of Object.entries(fieldErrorMap)) {
+                    const value = $(`#${field}`).val();
+                    $(`#${errorMessage}`).html('').css('display', 'none');
+                }
+                const inputMap = [
+                    'security_answer_1',
+                    'security_answer_2',
+                    'acc-password',
+                    'acc-confirm-password',
+                    'current-password',
+                ]
+
+                for(let inputField of inputMap)
+                {
+                    $(`#${inputField}`).val('');
+                }
+                break;
             case 401:
-                console.log("switch: ", message.message);
                 $('#currentPassword-message').html(message.message).css('display', 'block');
-            break;
+                break;
             case 400:
-                console.log("switch: ", message.message);
                 $('#currentPassword-message').html(message.message).css('display', 'block');
-            break;
+                break;
             case 500:
-                console.log("switch: ", message.message);
                 $('#currentPassword-message').html(message.message).css('display', 'block');
-            break;
+                break;
         }
     }
     

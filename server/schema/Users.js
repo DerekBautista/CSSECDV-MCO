@@ -34,8 +34,7 @@ const userSchema = mongoose.Schema({
         default: "img/default-user-profile-pic.jpg" // This is to make sure that the user has a default profile picture
     },
     passwordHistory: {
-        type: [String],
-        default: []
+        type: String
     },
     lastPasswordChange: {
         type: Date,
