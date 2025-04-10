@@ -52,11 +52,6 @@ $(document).ready(async function() {
 $("#verify-submit-btn").on('click', async function (event){
     event.preventDefault();
 
-    //For race condition. If the user waited for the lockout timer turn to 0, this is just a way to ensure synchronization.
-    await fetch(`/reauthenticate/checkUserLockout`,{
-        method: 'GET'
-    });
-
     const password = $('#verify-password').val()
 
     try{
