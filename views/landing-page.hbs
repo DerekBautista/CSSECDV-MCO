@@ -20,7 +20,11 @@
                         </a>
                         
                         <h3> Hello, {{ name }}! </h3>
-                        
+                        <div id="alert">
+                            <div class="alert alert-danger mt-3" role="alert"> Last Login Attempt: {{ lastLoginDate }}
+                            <button onclick="close()" type="button" id="close" class="close">&times;</button>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="d-flex flex-column justify-content-end my-3 date-time">
@@ -42,6 +46,11 @@
         
         <!-- Scripts -->
         <script>
+
+            function close() {
+            var x = document.getElementById("alert").hidden = true;
+            }
+
             function updateDateTime() {
                 const dateElement = document.getElementById('date-placeholder');
                 const timeElement = document.getElementById('time-placeholder');

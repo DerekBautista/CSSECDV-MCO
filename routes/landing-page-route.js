@@ -72,6 +72,9 @@ router.get('/', async (req, res) => {
     const totalEmployees = await getTotalEmployees();
     const totalDeployments = await getTotalDeployments();
     const totalRate = await getTotalRate();
+
+    const lastLoginDate = req.user.LastLoginDate;
+    console.log(lastLoginDate.toString());
     
     res.render('landing-page', { 
         pageTitle: 'Dashboard',
@@ -82,7 +85,8 @@ router.get('/', async (req, res) => {
         totalProjects: totalProjects,
         totalEmployees: totalEmployees,
         totalDeployments: totalDeployments,
-        totalRate: totalRate
+        totalRate: totalRate,
+        lastLoginDate: lastLoginDate
     });
 });
 

@@ -21,8 +21,6 @@ sideLinksEL.forEach((links) => {
   - delete this once the conenction of database is done
 */
 
-
-
 document.addEventListener("DOMContentLoaded", function(event) {
 
     /* Chart for Employees Per Project */

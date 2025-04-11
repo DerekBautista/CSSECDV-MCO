@@ -135,9 +135,19 @@ router.post('/login', async (req, res, next) => {
 
     const user = await User.findOne({ companyID: companyID });
 
+    if(user.CurrentLoginDate){
+        user.LastLoginDate = user.CurrentLoginDate;
+    }
+
+    const now = +new Date();
+    user.CurrentLoginDate = now;
+    await user.save();
+
     if (!user) {
         return res.status(401).json({ message: 'Incorrect company ID or password' });
     }
+
+    
 
     // Use the authenticate method from passport-local-mongoose to check if the password is correct
     user.authenticate(password, (err, result) => {
