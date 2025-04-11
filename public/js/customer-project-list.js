@@ -68,8 +68,6 @@ function initializeProjectListTable(projlist) {
         row.insertCell().textContent = project.totalEmployees;
         row.insertCell().textContent = project.totalDeployment;
         row.insertCell().textContent = project.status;
-        row.insertCell().textContent = project.startDate.split('T')[0];
-        row.insertCell().textContent = project.dueDate?.split('T')[0] || '';
         //row.insertCell().innerHTML = '<button  data-index="' + employee.no + '"class="btn btn-danger btn-sm btn-delete-employee" id="btn-delete-employee' + employee.no + '">Remove</button>';
 
         id += 1;

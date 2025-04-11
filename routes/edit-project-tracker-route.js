@@ -55,7 +55,8 @@ router.get('/:projectID', async (req, res) => {
         script: '/static/js/edit-project-tracker.js',
         activePage: 'create-new-tracker',
         script:'/static/js/edit-project-tracker.js',
-        name: req.user.firstName
+        name: req.user.firstName,
+        userType: req.user.userType
     });
 }); 
 
@@ -229,18 +230,6 @@ router.post("/delete-current-project", async (req,res) =>{
         console.error(`Error deleting project ${projectID}:`, err);
     }
 })
-/*
-// Function to handle creation of new tracker
-router.post('/', async (req, res) => {
-    try {
-            
-            res.status(200).json({ redirect: '/template-project-tracker/' + newProject._id});
-        
-    } catch (error) {
-        console.error('Error creating new tracker:', error);
-    }
-});*/
-
 
 
 

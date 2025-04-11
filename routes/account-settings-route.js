@@ -15,6 +15,7 @@ router.get('/', (req, res) => {
         lastname: req.user.lastName,
         suffix: req.user.suffix,
         companyID: req.user.companyID,
+        userType: req.user.userType
     });
 });
 

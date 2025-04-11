@@ -23,7 +23,8 @@ router.get('/', async (req, res) => {
         partial: 'employee-list',
         activePage: 'employee-list',
         script: '/static/js/employee-list.js',
-        name: req.user.firstName
+        name: req.user.firstName,
+        userType: req.user.userType
     });
 })
 

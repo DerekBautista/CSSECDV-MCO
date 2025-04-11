@@ -15,7 +15,8 @@ router.get('/', (req, res) => {
         script: '/static/js/reauthenticate.js',
         activePage: 'reauthenticate',
         redirect: redirect,
-        name: req.user.firstName
+        name: req.user.firstName,
+        userType: req.user.userType
     });
 }); 
 

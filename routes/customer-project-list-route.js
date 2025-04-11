@@ -24,8 +24,9 @@ router.get('/', async (req, res) => {
         pageTitle: 'Project List',
         partial: 'customer-project-list',
         activePage: 'project-list',
-        script:'/static/js/project-list.js',
-        name: req.user.firstName
+        script:'/static/js/customer-project-list.js',
+        name: req.user.firstName,
+        userType: req.user.userType
     });
 })
 module.exports = router;
