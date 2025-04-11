@@ -4,7 +4,6 @@ const app = require('express');
 const projects = require('../server/schema/Projects');
 const employee = require('../server/schema/Employees');
 const deployments = require('../server/schema/EmpDeployment');
-const users = require('../server/schema/Users');
 const router = app.Router()
 
 async function getTotalProjects() {
@@ -91,11 +90,8 @@ router.get('/', async (req, res) => {
         totalProjects: totalProjects,
         totalEmployees: totalEmployees,
         totalDeployments: totalDeployments,
-        totalRate: totalRate,
-        userType: userType
+        totalRate: totalRate
     });
-    console.log('User Role: ', userType);
 })
-
 
 module.exports = router;

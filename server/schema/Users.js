@@ -22,7 +22,7 @@ const userSchema = mongoose.Schema({
     },
     userType: {
         type: String, 
-        default: "EMPLOYEE"
+        default: "CUSTOMER"
     },
     companyID: {
         type: Number, 

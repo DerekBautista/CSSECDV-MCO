@@ -84,6 +84,7 @@ router.get('/', async (req, res) => {
         totalEmployees: totalEmployees,
         totalDeployments: totalDeployments,
         totalRate: totalRate,
+        userType: userType
     });
     console.log(`User Type: ${userType}`);
 });
