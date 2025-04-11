@@ -69,6 +69,7 @@ router.get('/', async (req, res) => {
     //     pageTitle: 'Dashboard',
     //     partial: 'dashboard'
     // });
+    const userType = req.users.userType;
     const totalProjects = await getTotalProjects();
     const totalEmployees = await getTotalEmployees();
     const totalDeployments = await getTotalDeployments();
@@ -92,6 +93,5 @@ router.get('/', async (req, res) => {
         totalRate: totalRate
     });
 })
-
 
 module.exports = router;
