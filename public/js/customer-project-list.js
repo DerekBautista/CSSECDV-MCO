@@ -62,12 +62,7 @@ function initializeProjectListTable(projlist) {
         row.insertCell().textContent = id;
 
         // Create and attach an anchor tag with _id of project name
-        const projectNameCell = row.insertCell();
-        const projectNameLink = document.createElement('a');
-        projectNameLink.textContent = project.name;
-        projectNameLink.href = `/template-project-tracker/${project._id}`; // Set the href attribute to the desired link destination
-        projectNameCell.appendChild(projectNameLink); // Append the anchor tag to the cell
-
+        row.insertCell().textContent = project.name;
         row.insertCell().textContent = project.location
         row.insertCell().textContent = project.description;
         row.insertCell().textContent = project.totalEmployees;
@@ -75,10 +70,7 @@ function initializeProjectListTable(projlist) {
         row.insertCell().textContent = project.status;
         row.insertCell().textContent = project.startDate.split('T')[0];
         row.insertCell().textContent = project.dueDate?.split('T')[0] || '';
-        row.insertCell().innerHTML = '<button  data-index="' + employee.no + '"class="btn btn-danger btn-sm btn-delete-employee" id="btn-delete-employee' + employee.no + '">Remove</button>';
-
-        
-
+        //row.insertCell().innerHTML = '<button  data-index="' + employee.no + '"class="btn btn-danger btn-sm btn-delete-employee" id="btn-delete-employee' + employee.no + '">Remove</button>';
 
         id += 1;
     });
