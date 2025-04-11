@@ -1,0 +1,54 @@
+<!--
+    project-list.hbs
+    Purpose:
+        - This is the partial page that contains the table for the project list.
+        - All projects from the database will be displayed here.
+-->
+
+            <div class="header">
+                <span class="d-flex justify-content-start">
+                    <h1>{{ pageTitle }}</h1>
+                </span>
+
+                <!-- Create a search bar here -->
+                <form action="#" class="d-flex justify-content-end search-form search-project" id="search-form">
+                    <!-- Button to reset the search bar and display all projects -->
+                    <div id="reset-button-placeholder">
+
+                    </div>
+                    
+
+                    <div class="form-input">
+                        <input type="search" id="search-project-input" placeholder="Search a project..."/>
+                        <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    </div>
+                </form>
+            </div>
+
+
+            <!-- Container -->
+            <div class="main-container">
+                <!-- Data -->
+                <div class="bottom-data">
+                    <div class="reports">
+                        <table id="project-list-table">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Project Name</th>
+                                    <th>Project Location</th>
+                                    <th>Project Description</th>
+                                    <th>No. of Employees</th>
+                                    <th>Deployment (in Hrs)</th>
+                                    <th>Status</th>
+                                    <th>Remove</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- End of Container -->
+

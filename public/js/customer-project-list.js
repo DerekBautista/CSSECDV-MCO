@@ -22,6 +22,31 @@ async function getProjectData() {
     }
 }
 
+
+async function searchProject(projectName){
+    // Send AJAX request to server
+    try{
+        fetch('/project-list/searchProject/'+projectName, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+            }
+        })
+
+        if(response.status == 200){
+            console.log("Get Project list success");
+            return true
+        }else{
+            console.error(`Project not found ${response.status}`);
+            return false;
+        }
+
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+}
+
 function initializeProjectListTable(projlist) {
     /*cant do this yet because there are null values
     projlist.sort(function(a,b){
@@ -50,7 +75,7 @@ function initializeProjectListTable(projlist) {
         row.insertCell().textContent = project.status;
         row.insertCell().textContent = project.startDate.split('T')[0];
         row.insertCell().textContent = project.dueDate?.split('T')[0] || '';
-        
+        row.insertCell().innerHTML = '<button  data-index="' + employee.no + '"class="btn btn-danger btn-sm btn-delete-employee" id="btn-delete-employee' + employee.no + '">Remove</button>';
 
         
 
