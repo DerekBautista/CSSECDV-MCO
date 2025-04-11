@@ -89,6 +89,7 @@ const editProjectTrackerRoute = require('./routes/edit-project-tracker-route.js'
 const reauthenticateRoute = require('./routes/reauthenticate-route.js')
 const userListRoute = require('./routes/user-list-route.js')
 const customerProjectListRoute = require('./routes/customer-project-list-route.js')
+const logListRoute = require('./routes/log-list-route.js')
 /*============================================EXPRESS====================================================================*/ 
 
 // Root route
@@ -132,6 +133,7 @@ app.use('/edit-project-tracker', verifyLogin, editProjectTrackerRoute);
 app.use('/reauthenticate', reauthenticateRoute)
 app.use('/user-list', verifyLogin, userListRoute)
 app.use('/customer-project-list', verifyLogin, customerProjectListRoute)
+app.use('/log-list', verifyLogin, logListRoute)
 // Temporary route for design purposes
 // app.use('/account-settings', verifyLogin, templateProjectTrackerRoute);
 

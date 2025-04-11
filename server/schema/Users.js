@@ -77,7 +77,7 @@ userSchema.methods.isLockedOut = async function() {
 
 userSchema.methods.deductAttempts = async function () {
     if(!this.remainingAttempts){ //if very first time failing authentication, we create attribute
-        this.remainingAttempts == 5
+        this.remainingAttempts = 5
     }
     this.remainingAttempts -= 1;
 
@@ -102,8 +102,7 @@ userSchema.methods.resetAttempts = async function () {
 userSchema.methods.unlockUser = async function() {
     this.lockedUntil = undefined;
     this.isLocked = false;
-    this.resetAttempts()
-    await this.save()
+    await this.resetAttempts()
 }
 
 userSchema.plugin(passportLocalMongoose, {usernameField: 'companyID'});

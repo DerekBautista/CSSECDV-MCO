@@ -8,8 +8,10 @@ const bcrypt = require('bcrypt');
 const express = require('express');
 const router = express.Router();
 const User = require('../server/schema/Users');
-const FailedAttempts = require('../server/schema/FailedAttempts');
+const Log = require('../server/schema/Logs');
+const FailedAttempts = require('../server/schema/FailedAttempts.js');
 const passport = require('passport')
+const LOG_TYPES = require('../public/utils/logTypes');
 
 
 async function checkIpAttempts(ip){
@@ -101,6 +103,7 @@ router.post('/register', async (req, res, next) => {
                 }
         
                 // If registration is successful, log in the user
+
                 req.login(user, (loginErr) => {
                     if (loginErr) {
                         console.error('Error during login after registration:', loginErr);
@@ -138,7 +141,7 @@ router.post('/login', async (req, res, next) => {
     }
 
     // Use the authenticate method from passport-local-mongoose to check if the password is correct
-    user.authenticate(password, (err, result) => {
+    user.authenticate(password, async (err, result) => {
         if (err) {
             console.error('Error checking if password is correct:', err);
             return res.status(500).json({ message: 'Internal Server Error' });
@@ -146,6 +149,19 @@ router.post('/login', async (req, res, next) => {
 
         if (result) {
             // Authentication succeeded
+            const log = new Log({
+                userID: user._id,
+                username: [
+                    user.firstName,
+                    user.middleName,
+                    user.lastName,
+                    user.suffix
+                ].filter(Boolean).join(' '),
+                userType: user.userType,
+                logType: LOG_TYPES.LOGIN_SUCCESS,
+                detectedAt: new Date()
+            });
+            await log.save()
             req.logIn(user, (err) => {
                 if (err) {
                     console.error('Error during login:', err);
@@ -172,6 +188,12 @@ router.get('/isCompanyID', async (req, res) => {
             res.status(200).json({ authenticated: true });
         } else {
             console.log('AUTHENTICATION FAILED')
+            const log = new Log({
+                ip: req.ip,
+                logType: LOG_TYPES.LOGIN_FAIL,
+                detectedAt: new Date()
+            });
+            await log.save();
             const ip = req.ip;
             const {remainingAttempts, lockedUntil} = await checkIpAttempts(ip)
             res.status(200).json({ authenticated: false, remainingAttempts: remainingAttempts, lockedUntil: lockedUntil});
@@ -201,6 +223,12 @@ router.get('/isPassword', async (req, res) => {
             if (result) {
                 res.status(200).json({ authenticated: true});
             } else {
+                const log = new Log({
+                    ip: req.ip,
+                    logType: LOG_TYPES.LOGIN_FAIL,
+                    detectedAt: new Date()
+                });
+                await log.save();
                 const ip = req.ip;
                 const {remainingAttempts, lockedUntil} = await checkIpAttempts(ip)
                 res.status(200).json({ authenticated: false, remainingAttempts: remainingAttempts, lockedUntil: lockedUntil});

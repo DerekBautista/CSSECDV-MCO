@@ -33,7 +33,6 @@ $(document).ready(async function() {
         
         const response = await userPromise.json();
         const userIsLockedout = response.isLocked;
-        console.log("User is locked?: " + userIsLockedout)
         if(userIsLockedout){
             const lockedUntil = new Date(response.lockedUntil)
             const now = new Date();
@@ -64,6 +63,15 @@ $("#verify-submit-btn").on('click', async function (event){
             if(passwordData.remainingAttempts > 0)
                 $("#verify-error-message").html('Failed Login. (' + passwordData.remainingAttempts + ' attempts remaining.)').css('display', 'block');
             else{
+                const logPromise = await fetch(`/reauthenticate/create-log`,{
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        logType: 'user_lockout'
+                    })
+                });
                 const lockedUntil = new Date(passwordData.lockedUntil);
                 setLockoutTimer(lockedUntil)
             }

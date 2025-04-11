@@ -20,17 +20,11 @@
             
             <ul class="side-menu">
                 {{#if (eq userType 'ADMIN')}}
-                    <li {{#if (eq activePage 'dashboard')}} class="active" {{/if}}>
-                        <a href="/dashboard"><i class="fa fa-solid fa-table-columns"></i>Dashboard</a>
+                    <li {{#if (eq activePage 'create-new-tracker')}} class="active" {{/if}}>
+                        <a href="/user-list"><i class="fa fa-solid fa-users"></i>User List</a>
                     </li>
                     <li {{#if (eq activePage 'create-new-tracker')}} class="active" {{/if}}>
-                        <a href="/create-new-tracker"><i class="fa fa-solid fa-square-plus"></i>Create New Tracker</a>
-                    </li>
-                    <li {{#if (eq activePage 'project-list')}} class="active" {{/if}}>
-                        <a href="/project-list"><i class="fa fa-solid fa-table-list"></i>Project List</a>
-                    </li>
-                    <li {{#if (eq activePage 'employee-list')}} class="active" {{/if}}>
-                        <a href="/employee-list"><i class="fa fa-solid fa-users"></i>Employee List</a>
+                        <a href="/log-list"><i class="fa fa-solid fa-file"></i>Log List</a>
                     </li>
                 {{/if}}
 
@@ -45,7 +39,7 @@
 
                 {{#if (eq userType 'CUSTOMER')}}
                     <li {{#if (eq activePage 'cutomer-project-list')}} class="active" {{/if}}>
-                        <a href="/customer-project-list"><i class="fa fa-solid fa-circle-info"></i>My Projects Cart</a>
+                        <a href="/customer-project-list"><i class="fa fa-solid fa-circle-info"></i>Project List</a>
                     </li>
 
                     <li {{#if (eq activePage 'employee-list')}} class="active" {{/if}}>
