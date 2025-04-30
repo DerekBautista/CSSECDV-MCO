@@ -6,6 +6,7 @@ const app = require('express');
 const projects = require('../server/schema/Projects');
 const employee = require('../server/schema/Employees');
 const deployments = require('../server/schema/EmpDeployment');
+const user = require ('../server/schema/Users');
 const router = app.Router()
 
 async function getTotalProjects() {
@@ -71,7 +72,8 @@ router.get('/', async (req, res) => {
     const totalProjects = await getTotalProjects();
     const totalEmployees = await getTotalEmployees();
     const totalDeployments = await getTotalDeployments();
-    const totalRate = await getTotalRate(); 
+    const totalRate = await getTotalRate();
+    const userType = req.user.userType;
 
     res.render('landing-page', { 
         pageTitle: 'Dashboard',
@@ -82,8 +84,10 @@ router.get('/', async (req, res) => {
         totalProjects: totalProjects,
         totalEmployees: totalEmployees,
         totalDeployments: totalDeployments,
-        totalRate: totalRate
+        totalRate: totalRate,
+        userType: userType
     });
+    console.log(`User Type: ${userType}`);
 });
 
 

@@ -75,89 +75,71 @@
         </div>
 
         <!-- New Tracker -->           
-            <main>
-                <div class="header">
-                    <h1>Create New Project Tracker</h1>
+         <!-- New Tracker -->           
+<main>
+    <div class="header">
+        <h1>Create New Project Tracker</h1>
+    </div>
+
+    <div class="new-tracker-btns">
+        <button type="button" id="btn-create-new-tracker" class="btn btn-success mb-3 me-3" onclick="clickedCreateNewTrackerBtn()">Create New Tracker</button>
+        <button type="button" id="btw-cancel-tracker" class="btn btn-danger mb-3 me-3" onclick="clickedCancelTrackerBtn()">Cancel</button>
+    </div>
+
+    <form id="form-new-tracker">
+        <div class="bottom-data">
+            <div class="reports">
+                <div class="mb-3">
+                    <label for="newProjectName" class="form-label">Project Name</label>
+                    <input type="text" class="form-control" id="newProjectName" placeholder="Enter Project Name" required>
                 </div>
 
-                <div class="new-tracker-btns">
-                    <button type="button" id="btn-create-new-tracker" class="btn btn-success mb-3 me-3" onclick="clickedCreateNewTrackerBtn()">Create New Tracker</button>
-                    <button type="button" id="btw-cancel-tracker" class="btn btn-danger mb-3 me-3" onclick="clickedCancelTrackerBtn()">Cancel</button>
-                    <!--
-                        data-bs-toggle="modal" data-bs-target="#createNewTrackerModal"
-                        data-bs-toggle="modal" data-bs-target="#cancelTrackerModal"
-                    -->
+                <div class="mb-3">
+                    <label for="newProjectDescription" class="form-label">Project Description</label>
+                    <input type="text" class="form-control" id="newProjectDescription" placeholder="Enter Project Description" required>
                 </div>
 
-                <form id="form-new-tracker">
-                    <div class="bottom-data">
-                        <div class="reports">
-                            <div class="mb-3">
-                                <label for="newProjectName" class="form-label">Project Name</label>
-                                <input type="text" class="form-control" id="newProjectName" placeholder="Enter Project Name" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="newProjectDescription" class="form-label">Project Description</label>
-                                <input type="text" class="form-control" id="newProjectDescription" placeholder="Enter Project Description" required>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-
-                <!-- Data -->
-                <div class="bottom-data">
-                    <div class="reports">
-                        <div class="div-options-employee">
-                            <span class="new-tracker-to-do">
-                                Choose To Do:
-                            </span>
-                            <span>
-                                <button type="button" id="btn-enter-employee" class="btn btn-primary mb-3 me-3" data-bs-toggle="modal" data-bs-target="#enterEmployeeModal" onclick="clickedAddEmployeeBtn()">Add Employee</button>
-                                <!-- <button type="button" id="btn-edit-employee" class="btn btn-warning mb-3 me-3"  onclick="clickedEditEmployeeBtn()">Edit Employee</button>
-                                <button type="button" id="btn-remove-employee" class="btn btn-danger mb-3 me-3"  onclick="clickedRemoveEmployeeBtn()">Remove Employee</button>
-                                -->
-                                <!--
-                                    data-bs-toggle="modal" data-bs-target="#editEmployeeModal"
-                                    data-bs-toggle="modal" data-bs-target="#removeEmployeeModal"
-                                -->
-                            </span>
-                            
-                        </div>
-                        <table id="employee-table">
-                            <thead>
-                                <tr>
-                                    <th>No.</th>
-                                    <th>Name</th>
-                                    <th>Position</th>
-                                    <th>Deployment (in Hrs)</th>
-                                    <th>Rate (per Hr)</th>
-                                    <th>Total Rate</th>
-                                    <th>Edit</th>
-                                    <th>Delete</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                    </div>
+                <!-- Start Date -->
+                <div class="mb-3">
+                    <label for="newProjectStartDate" class="form-label">Project Start Date</label>
+                    <input type="date" class="form-control" id="newProjectStartDate" required>
+                    <div id="project-start-date-message" style="display:none; color:red;"></div>
                 </div>
-            </main>
 
+                <!-- End Date -->
+                <div class="mb-3">
+                    <label for="newProjectEndDate" class="form-label">Project End Date</label>
+                    <input type="date" class="form-control" id="newProjectEndDate" required>
+                    <div id="project-end-date-message" style="display:none; color:red;"></div>
+                </div>
+            </div>
+        </div>
+    </form>
 
-
-        <script src="../js/create-new-tracker.js"></script>
-
-        <script>
-            initializeNewTracker();
-        </script>
-
-        <!-- <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                replaceMainContentWithTemplate();
-            });
-        </script> -->
-
-        <script>
-            replaceMainContentWithTemplate();
-        </script>
+    <!-- Data -->
+    <div class="bottom-data">
+        <div class="reports">
+            <div class="div-options-employee">
+                <span class="new-tracker-to-do">Choose To Do:</span>
+                <span>
+                    <button type="button" id="btn-enter-employee" class="btn btn-primary mb-3 me-3" data-bs-toggle="modal" data-bs-target="#enterEmployeeModal" onclick="clickedAddEmployeeBtn()">Add Employee</button>
+                </span>
+            </div>
+            <table id="employee-table">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Name</th>
+                        <th>Position</th>
+                        <th>Deployment (in Hrs)</th>
+                        <th>Rate (per Hr)</th>
+                        <th>Total Rate</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</main>

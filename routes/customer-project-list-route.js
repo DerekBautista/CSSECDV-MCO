@@ -22,9 +22,9 @@ router.get('/', async (req, res) => {
     /*Get the right information in the db to here*/
     res.render('landing-page', { 
         pageTitle: 'Project List',
-        partial: 'project-list',
+        partial: 'customer-project-list',
         activePage: 'project-list',
-        script:'/static/js/project-list.js',
+        script:'/static/js/customer-project-list.js',
         name: req.user.firstName,
         userType: req.user.userType
     });

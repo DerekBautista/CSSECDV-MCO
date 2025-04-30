@@ -1,0 +1,51 @@
+<!--
+    log-list.hbs
+    Purpose:
+        - This is the partial page that contains the table for the log list.
+        - All logs from the database will be displayed here.
+-->
+
+
+            <div class="header">
+                <span class="d-flex justify-content-start">
+                    <h1>{{ pageTitle }}</h1>
+                </span>
+
+                <!-- Create a search bar here -->
+                <form action="#" class="d-flex justify-content-end search-form search-log" id="search-form">
+                    <!-- Button to reset the search bar and display all logs -->
+                    <div id="reset-button-placeholder">
+
+                    </div>
+                    
+
+                    <div class="form-input">
+                        <input type="search" id="search-log-input" placeholder="Search a log..."/>
+                        <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    </div>
+                </form>
+            </div>
+            <!-- Container -->
+            <div class="main-container">
+                <!-- Data -->
+                <div class="bottom-data">
+                    <div class="reports">
+                        <table id="log-list-table">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Username/Ip</th>
+                                    <th>User Type</th>
+                                    <th>Log type</th>
+                                    <th>Detected At</th>
+                                </tr>
+                            </thead>
+                            <tbody id="log-list-tbody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- End of Container -->
+
+

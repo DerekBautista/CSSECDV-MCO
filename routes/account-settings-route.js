@@ -24,6 +24,8 @@ router.get('/', (req, res) => {
         securityAnswer1: req.user.securityQuestion1.answer,
         securityAnswer2: req.user.securityQuestion2.answer,
         userinfo: req.user
+        userType: req.user.userType
+
     });
 });
 

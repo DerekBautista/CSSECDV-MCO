@@ -64,7 +64,7 @@ app.engine('hbs', engine({
     //defaultView: 'default',
     //layoutsDir:'./views/layouts/',
     partialsDir: __dirname + '/views/partials/',
-    helpers: {eq: function (v1, v2) {return v1 === v2; },} // Register helper function
+    helpers: {eq: function (v1, v2) {return v1 === v2; }, and: function (v1, v2) {return v1 && v2;}} // Register helper function
 })); 
 
 app.set('view engine', 'hbs');
@@ -86,7 +86,10 @@ const projectListRoute = require('./routes/project-list-route.js')
 const accountSettingsRoute = require('./routes/account-settings-route.js');
 const templateProjectTrackerRoute = require('./routes/template-project-tracker-route.js');
 const editProjectTrackerRoute = require('./routes/edit-project-tracker-route.js');
-
+const reauthenticateRoute = require('./routes/reauthenticate-route.js')
+const userListRoute = require('./routes/user-list-route.js')
+const customerProjectListRoute = require('./routes/customer-project-list-route.js')
+const logListRoute = require('./routes/log-list-route.js')
 /*============================================EXPRESS====================================================================*/ 
 
 // Root route
@@ -127,6 +130,10 @@ app.use('/employee-list', verifyLogin, employeeListRoute);
 app.use('/account-settings', verifyLogin, accountSettingsRoute);
 app.use('/template-project-tracker', verifyLogin, templateProjectTrackerRoute);
 app.use('/edit-project-tracker', verifyLogin, editProjectTrackerRoute);
+app.use('/reauthenticate', reauthenticateRoute)
+app.use('/user-list', verifyLogin, userListRoute)
+app.use('/customer-project-list', verifyLogin, customerProjectListRoute)
+app.use('/log-list', verifyLogin, logListRoute)
 // Temporary route for design purposes
 // app.use('/account-settings', verifyLogin, templateProjectTrackerRoute);
 
@@ -138,7 +145,7 @@ function verifyLogin(req, res, next) {
         console.log('User not logged in!')
         res.render('index', {message: 'User not logged in'})
     } else {
-         next();
+        next();
     }
 }
 

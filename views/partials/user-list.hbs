@@ -1,0 +1,53 @@
+<!--
+    user-list.hbs
+    Purpose:
+        - This is the partial page that contains the table for the user list.
+        - All users from the database will be displayed here.
+-->
+
+
+            <div class="header">
+                <span class="d-flex justify-content-start">
+                    <h1>{{ pageTitle }}</h1>
+                </span>
+
+                <!-- Create a search bar here -->
+                <form action="#" class="d-flex justify-content-end search-form search-user" id="search-form">
+                    <!-- Button to reset the search bar and display all users -->
+                    <div id="reset-button-placeholder">
+
+                    </div>
+                    
+
+                    <div class="form-input">
+                        <input type="search" id="search-user-input" placeholder="Search a user..."/>
+                        <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    </div>
+                </form>
+            </div>
+            <!-- Container -->
+            <div class="main-container">
+                <!-- Data -->
+                <div class="bottom-data">
+                    <div class="reports">
+                        <table id="user-list-table">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Username</th>
+                                    <th>Company ID </th>
+                                    <th>User type</th>
+                                    <th>Is Locked</th>
+                                    <th>Lock Until</th>
+                                    <th>Delete User Button</th>
+                                </tr>
+                            </thead>
+                            <tbody id="user-list-tbody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- End of Container -->
+
+
