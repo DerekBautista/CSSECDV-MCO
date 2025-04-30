@@ -81,6 +81,8 @@ router.get('/', async (req, res) => {
         totalDeployments: totalDeployments,
         totalRate: totalRate
     }*/
+    
+
     res.render('landing-page', { 
         pageTitle: 'Dashboard',
         partial: 'dashboard',
@@ -94,5 +96,4 @@ router.get('/', async (req, res) => {
         userType: req.user.userType,
     });
 })
-
 module.exports = router;

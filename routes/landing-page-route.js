@@ -74,6 +74,7 @@ router.get('/', async (req, res) => {
     const totalDeployments = await getTotalDeployments();
     const totalRate = await getTotalRate();
     const userType = req.user.userType;
+
     res.render('landing-page', { 
         pageTitle: 'Dashboard',
         partial: 'dashboard',

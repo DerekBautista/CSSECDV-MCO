@@ -36,6 +36,22 @@ const userSchema = mongoose.Schema({
         default: "img/default-user-profile-pic.jpg" // This is to make sure that the user has a default profile picture
     },
 
+    passwordHistory: {
+        type: String
+    },
+    lastPasswordChange: {
+        type: Date,
+        default: null
+    },
+    securityQuestion1: {
+        question: String,
+        answer: String
+    },
+    securityQuestion2: {
+        question: String,
+        answer: String
+    },
+
     remainingAttempts: {
         type: Number,
     },
@@ -55,7 +71,7 @@ const userSchema = mongoose.Schema({
     totalLockouts:{
         type:Number
     }
-})
+});
 
 
 userSchema.methods.lockUser = async function(minutes) {

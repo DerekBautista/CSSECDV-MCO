@@ -26,6 +26,7 @@ FailedAttempt.methods.isLockedOut = function() {
 FailedAttempt.methods.deductAttempts = async function () {
     this.remainingAttempts -= 1;
     if(this.remainingAttempts == 0){
+        await this.lockUser(1);
         await this.lockIp(1);
         await this.save();
         return {remainingAttempts: this.remainingAttempts, lockedUntil: this.lockedUntil};
